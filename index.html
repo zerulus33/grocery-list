@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery List Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Grocery List</h1>
+            <p>Select items, set quantities and prices, and generate your list.</p>
+        </header>
+
+        <main>
+            <div class="table-header">
+                <div class="col-check"></div>
+                <div class="col-name">Item Name</div>
+                <div class="col-curr-qty">Current QTY</div>
+                <div class="col-qty">Req QTY</div>
+                <div class="col-unit">Unit</div>
+                <div class="col-price">Price (₹)</div>
+                <div class="col-total">Total (₹)</div>
+            </div>
+            
+            <div id="grocery-list" class="grocery-list">
+                <!-- Items will be injected here via JS -->
+            </div>
+
+            <div class="add-item-section">
+                <h3>Add Custom Item</h3>
+                <form id="add-item-form">
+                    <input type="text" id="new-item-name" placeholder="Item Name" required>
+                    <button type="submit" class="btn btn-secondary">Add Item</button>
+                </form>
+            </div>
+
+            <div class="generate-section">
+                <button id="generate-btn" class="btn btn-primary">Generate List & Code</button>
+            </div>
+
+            <div class="output-section" id="output-section" style="display: none;">
+                <div class="output-header">
+                    <h3>Generated Text</h3>
+                    <button id="copy-btn" class="btn btn-icon">Copy to Clipboard</button>
+                </div>
+                <!-- Output will include backticks and formatted strings inside PRE -->
+                <pre id="output-text"></pre>
+            </div>
+        </main>
+    </div>
+    
+    <button id="scroll-bottom-btn" class="fab-btn" aria-label="Scroll to bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+    </button>
+    
+    <!-- Template for a single grocery row -->
+    <template id="row-template">
+        <div class="list-row">
+            <div class="col-check">
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="item-checkbox">
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+            <div class="col-name item-name"></div>
+            <div class="col-curr-qty">
+                <input type="number" class="item-curr-qty" min="0" step="any" placeholder="0" disabled>
+            </div>
+            <div class="col-qty">
+                <input type="number" class="item-qty" min="0" step="any" placeholder="1" disabled>
+            </div>
+            <div class="col-unit">
+                <select class="item-unit" disabled>
+                    <option value="nos." selected>nos. (default)</option>
+                    <option value="500ml">500ml</option>
+                    <option value="1 L">1 L</option>
+                    <option value="500 mL">500 mL</option>
+                    <option value="kg">kg</option>
+                    <option value="custom">custom</option>
+                </select>
+                <input type="text" class="item-unit-custom" placeholder="Unit" style="display: none;" disabled>
+            </div>
+            <div class="col-price">
+                <input type="number" class="item-price" min="0" step="any" placeholder="0.00" disabled>
+            </div>
+            <div class="col-total">
+                <span class="item-total">0.00</span>
+            </div>
+        </div>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+</html>
