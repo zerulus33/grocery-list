@@ -247,7 +247,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const total = row.querySelector(".item-total").textContent;
 
         // Format text output
-        textLines.push(`${name}\t have:${currQty}\t need:${reqQty}`);
+        textLines.push(
+          `${name}\t have:${currQty + " " + unit}\t need:${reqQty + " " + unit}`,
+        );
 
         // Format code output
         // format: item,currQty,reqQty,unit,price,total;
