@@ -1,36 +1,41 @@
 const defaultItems = [
-  { name: "Battery (Thicc)", unit: "nos.", price: 22 },
-  { name: "Battery (Thin)", unit: "nos.", price: 22 },
-  { name: "Biscuit", unit: "nos.", price: 30 },
-  { name: "Bread", unit: "nos.", price: 35 },
-  { name: "Butter", unit: "nos.", price: 47 },
-  { name: "Coffee", unit: "nos.", price: 10 },
-  { name: "Cross", unit: "nos.", price: 65 },
-  { name: "Dal", unit: "kg", price: 100 },
-  { name: "Deodarant", unit: "nos.", price: 125 },
-  { name: "Eggs", unit: "nos.", price: 8 },
-  { name: "Face Wash", unit: "nos.", price: 20 },
-  { name: "Ginger Bah", unit: "gm", price: 0 },
-  { name: "Ginger Makhir", unit: "gm", price: 0 },
-  { name: "Kwai/Raja", unit: "nos.", price: 25 },
-  { name: "Milk", unit: "1 L / 500ml", price: "75 / 39" },
-  { name: "Moisturizer", unit: "nos.", price: 245 },
-  { name: "Oats", unit: "nos.", price: 100 },
-  { name: "Oil", unit: "15 L / 1 L", price: 1000 },
-  { name: "Onion", unit: "kg", price: 100 },
-  { name: "Potato", unit: "kg", price: 20 },
-  { name: "Rice", unit: "30 kg / kg", price: 1280 },
-  { name: "Salt", unit: "nos.", price: 30 },
-  { name: "Shampoo", unit: "nos.", price: 185 },
-  { name: "Slasha", unit: "nos.", price: 210 },
-  { name: "Soap (HD)", unit: "Pack of 4", price: 110 },
-  { name: "Soap (Pears)", unit: "nos.", price: 57 },
-  { name: "Steelwool", unit: "nos.", price: 40 },
-  { name: "Sugar", unit: "kg", price: 55 },
-  { name: "Surf Excel", unit: "nos.", price: 140 },
-  { name: "Toilet Paper", unit: "Pack of 6 / Pack of 10", price: 100 },
-  { name: "Toothpaste", unit: "nos.", price: 100 },
-  { name: "Turmeric", unit: "gm", price: 40 },
+  { name: "Battery (Thicc AA)", unit: "nos.", price: 22 },
+  { name: "Battery (Thin AAA)", unit: "nos.", price: 22 },
+  { name: "Biscuit", unit: "pack", price: 30 },
+  { name: "Bread", unit: "loaf", price: 35 },
+  { name: "Butter", unit: "pack of 100g", price: 47 },
+  { name: "Coffee", unit: "pack", price: 10 },
+  { name: "Cross", unit: "bottle of 500ml", price: 65 },
+  { name: "Dal", unit: "bag of 1 kg / 500g", price: 100 },
+  { name: "Deodarant", unit: "pack of 125ml", price: 125 },
+  { name: "Eggs", unit: "tray of 15 nos. / 30 nos.", price: 8 },
+  { name: "Face Wash", unit: "pack", price: 20 },
+  { name: "Ginger Bah", unit: "bag of 100 gm / 250g / 500g", price: 0 },
+  { name: "Ginger Makhir", unit: "bag of 100 gm / 250g / 500g", price: 0 },
+  { name: "Kwai", unit: "pack", price: 10 },
+  { name: "Raja", unit: "pack", price: 15 },
+  { name: "Milk", unit: "pack of 500 ml / 1 L", price: "39 / 75" },
+  { name: "Moisturizer", unit: "pack of 100ml / 200 ml", price: "0 / 245" },
+  { name: "Oats", unit: "pack of 400g", price: 100 },
+  {
+    name: "Oil",
+    unit: "bottle / bottle / tin of 500 ml / 1 L / 15L",
+    price: "0 / 0 / 1000",
+  },
+  { name: "Onion", unit: "bag of 500g / 1 kg", price: 0 },
+  { name: "Potato", unit: "bag of 500g / 1 kg", price: 20 },
+  { name: "Rice", unit: "bag / sack of 1 kg / 30 kg", price: 1280 },
+  { name: "Salt", unit: "pack", price: 30 },
+  { name: "Shampoo", unit: "pack", price: 185 },
+  { name: "Slasha", unit: "pack of 250g", price: 105 },
+  { name: "Soap (HD)", unit: "pack of 4 nos.", price: 110 },
+  { name: "Soap (Pears)", unit: "pack", price: 57 },
+  { name: "Steelwool", unit: "pack", price: 30 },
+  { name: "Sugar", unit: "bag of 1 kg", price: 55 },
+  { name: "Surf Excel", unit: "pack of 1 kg", price: 140 },
+  { name: "Toilet Paper", unit: "pack of 6 nos. / 10 nos.", price: 100 },
+  { name: "Toothpaste", unit: "pack", price: 100 },
+  { name: "Turmeric", unit: "pack of 50g", price: 50 },
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -247,9 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const total = row.querySelector(".item-total").textContent;
 
         // Format text output
-        textLines.push(
-          `${name}\t have:${currQty + " " + unit}\t need:${reqQty + " " + unit}`,
-        );
+        textLines.push(`${reqQty + " " + unit} ${name}\t (${currQty} left)`);
 
         // Format code output
         // format: item,currQty,reqQty,unit,price,total;
@@ -264,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const formattedOutput = `\`\`\`\n${textLines.join("\n")}\n\`\`\`\n\ncode:\n${codeItems.join(";")}`;
+    const formattedOutput = `\`\`\`\n${textLines.join("\n")}\n\`\`\``;
 
     const outputSection = document.getElementById("output-section");
     const outputText = document.getElementById("output-text");
