@@ -192,6 +192,11 @@ el("footer").onclick = (e) => {
       "\n" +
       "https://1drv.ms/x/c/2812548f34b84739/IQCdYTpFOrvGRZmNgRCfxiIaAQdUlTSoXDMMMA0GLtLjgWI?e=hkifX3";
 
+    if (extraArr.length > 0) {
+      extraArr.forEach((item) => {
+        results = results + "\n[" + item + "]";
+      });
+    }
     console.log(results);
     writeClipboardText(results);
     alert("Copied to clipboard!");
@@ -206,9 +211,15 @@ el("header").onclick = () => {
 elA(".menu > p").forEach((option, index) => {
   option.onclick = () => {
     option.parentElement.style.top = "-100%";
-    window.scrollTo({
-      top: elA("h2")[index].getBoundingClientRect().top + window.scrollY - 60,
-      behavior: "smooth",
-    });
+    if (index == 5) {
+      let itemName = prompt("Item name?");
+      let itemQty = prompt("How many?");
+      extraArr.push([itemName, 0, +itemQty]);
+    } else {
+      window.scrollTo({
+        top: elA("h2")[index].getBoundingClientRect().top + window.scrollY - 60,
+        behavior: "smooth",
+      });
+    }
   };
 });
