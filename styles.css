@@ -4,6 +4,7 @@
   bottom: 0;
   font-family: Arial, sans-serif;
   box-sizing: border-box;
+  user-select: none;
 }
 body {
   padding: 60px 0 60px 0;
@@ -28,6 +29,7 @@ footer {
   top: auto;
   bottom: 0;
   border-top: 1px solid;
+  border-bottom: none;
   justify-content: space-between;
   padding: 0 20px 0 20px;
   font-weight: 600;
@@ -53,4 +55,10 @@ footer {
   height: 100%;
   display: flex;
   align-items: center;
+}
+
+button {
+  padding: 5px;
+  background-color: white;
+  border: 1px solid;
 }

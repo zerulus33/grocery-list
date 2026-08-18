@@ -9,7 +9,7 @@ const itemList = [
   ["Biscuit", 40, 0],
   ["Cupcake", 35, 0],
   ["Lamington", 90, 0],
-  ["Oats", 89, 0],
+  ["Oats", 86, 0],
   ["Eggs (Half Tray)", 120, 0],
   ["Chicken", 300, 0],
   ["Breadcrumbs", 0, 0],
@@ -43,6 +43,12 @@ const elA = (selector) => document.querySelectorAll(selector);
 
 itemList.forEach((item, index) => {
   const div = document.createElement("div");
+  const buttonMinus = document.createElement("button");
+  buttonMinus.className = "minus";
+  buttonMinus.innerText = "-";
+  const buttonAdd = document.createElement("button");
+  buttonAdd.className = "add";
+  buttonAdd.innerText = "+";
   const input = document.createElement("input");
   const h3 = document.createElement("h3");
   const p = document.createElement("p");
@@ -51,15 +57,45 @@ itemList.forEach((item, index) => {
   input.min = "0";
   input.dataset.index = index;
   div.className = "item";
+  div.appendChild(buttonMinus);
   div.appendChild(input);
+  div.appendChild(buttonAdd);
   div.appendChild(h3);
   div.appendChild(p);
   h3.innerText = item[0];
   p.innerText = "₹" + item[1];
   document.body.appendChild(div);
+  totalArr.push(0);
+  totalArr.push(0);
 
-  totalArr.push(0);
-  totalArr.push(0);
+  buttonAdd.onclick = (e) => {
+    const input = e.target.parentElement.children[1];
+    input.value = +input.value + 1;
+    input.parentElement.style.background =
+      input.value == 0 ? "white" : "lightgreen";
+    let amount = +input.parentElement.children[4].innerText.slice(1);
+    totalArr[input.dataset.index] = input.value * amount;
+    resultArr[input.dataset.index][2] = input.value;
+    let total = totalArr.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      0,
+    );
+    el("footer > p:nth-child(2)").innerText = "₹" + total;
+  };
+  buttonMinus.onclick = (e) => {
+    const input = e.target.parentElement.children[1];
+    input.value = input.value == 0 ? input.value : +input.value - 1;
+    input.parentElement.style.background =
+      input.value == 0 ? "white" : "lightgreen";
+    let amount = +input.parentElement.children[4].innerText.slice(1);
+    totalArr[input.dataset.index] = input.value * amount;
+    resultArr[input.dataset.index][2] = input.value;
+    let total = totalArr.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      0,
+    );
+    el("footer > p:nth-child(2)").innerText = "₹" + total;
+  };
 });
 
 elA(".item > input").forEach(
@@ -67,7 +103,7 @@ elA(".item > input").forEach(
     (input.onchange = (e) => {
       input.parentElement.style.background =
         e.target.value == 0 ? "white" : "lightgreen";
-      let amount = +input.parentElement.children[2].innerText.slice(1);
+      let amount = +input.parentElement.children[4].innerText.slice(1);
       totalArr[input.dataset.index] = e.target.value * amount;
       resultArr[input.dataset.index][2] = e.target.value;
       let total = totalArr.reduce(
@@ -78,14 +114,25 @@ elA(".item > input").forEach(
     }),
 );
 
+async function writeClipboardText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
 el("footer").onclick = (e) => {
   let results = "";
 
   resultArr.forEach((item) => {
-    if (item[2] !== 0) {
+    if (item[2] != 0) {
       results = results + "\n" + item[2] + "," + item[0] + "," + item[1];
     }
   });
-  results.slice(1);
-  console.log(results.slice(1));
+  results = results.slice(1);
+  if (results != "") {
+    console.log(results);
+    writeClipboardText(results);
+    alert("Copied to clipboard!");
+  }
 };
