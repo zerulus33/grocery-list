@@ -7,7 +7,7 @@
   user-select: none;
 }
 body {
-  padding: 60px 0 60px 0;
+  padding: 40px 0 60px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -89,7 +89,7 @@ h3 {
   align-items: center;
   gap: 5px;
   z-index: 1;
-  transition: top 0.3s;
+  transition: top 0.3s ease-out;
   padding: 10px 0 10px 0;
   border-bottom: 1px solid;
 }

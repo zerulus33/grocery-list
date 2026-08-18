@@ -197,8 +197,10 @@ el("footer").onclick = (e) => {
   }
 };
 
+let menuState = false;
 el("header").onclick = () => {
-  el(".menu").style.top = "50px";
+  el(".menu").style.top = menuState ? "-100%" : "50px";
+  menuState = !menuState;
 };
 elA(".menu > p").forEach((option, index) => {
   option.onclick = () => {
