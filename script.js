@@ -106,7 +106,7 @@ itemList.forEach((item, index) => {
     const input = e.target.parentElement.children[1];
     input.value = +input.value + 1;
     input.parentElement.style.background =
-      input.value == 0 ? "white" : "lightgreen";
+      input.value == 0 ? "var(--bg)" : "seagreen";
     let amount = +input.parentElement.children[4].innerText.slice(1);
     totalArr[input.dataset.index] = input.value * amount;
     resultArr[input.dataset.index][2] = input.value;
@@ -120,7 +120,7 @@ itemList.forEach((item, index) => {
     const input = e.target.parentElement.children[1];
     input.value = input.value == 0 ? input.value : +input.value - 1;
     input.parentElement.style.background =
-      input.value == 0 ? "white" : "lightgreen";
+      input.value == 0 ? "var(--bg)" : "seagreen";
     let amount = +input.parentElement.children[4].innerText.slice(1);
     totalArr[input.dataset.index] = input.value * amount;
     resultArr[input.dataset.index][2] = input.value;
@@ -136,7 +136,7 @@ elA(".item > input").forEach(
   (input) =>
     (input.onchange = (e) => {
       input.parentElement.style.background =
-        e.target.value == 0 ? "white" : "lightgreen";
+        e.target.value == 0 ? "var(--bg)" : "seagreen";
       let amount = +input.parentElement.children[4].innerText.slice(1);
       totalArr[input.dataset.index] = e.target.value * amount;
       resultArr[input.dataset.index][2] = e.target.value;
