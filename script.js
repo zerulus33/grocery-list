@@ -196,3 +196,16 @@ el("footer").onclick = (e) => {
     alert("Copied to clipboard!");
   }
 };
+
+el("header").onclick = () => {
+  el(".menu").style.top = "50px";
+};
+elA(".menu > p").forEach((option, index) => {
+  option.onclick = () => {
+    option.parentElement.style.top = "-100%";
+    window.scrollTo({
+      top: elA("h2")[index].getBoundingClientRect().top + window.scrollY - 60,
+      behavior: "smooth",
+    });
+  };
+});

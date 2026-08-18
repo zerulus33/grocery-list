@@ -23,7 +23,7 @@ footer {
   justify-content: center;
   border-bottom: 1px solid;
   background-color: white;
-  z-index: 1;
+  z-index: 2;
 }
 footer {
   top: auto;
@@ -76,4 +76,27 @@ h2 {
 }
 h3 {
   font-weight: 500;
+}
+.menu {
+  position: fixed;
+  background: white;
+  width: 100%;
+  left: 0;
+  top: -100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 1;
+  transition: top 0.3s;
+  padding: 10px 0 10px 0;
+  border-bottom: 1px solid;
+}
+.menu > p {
+  width: 50%;
+  border-radius: 10px;
+  text-align: center;
+  background-color: rgb(219, 219, 219);
+  padding: 10px;
 }
