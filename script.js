@@ -185,10 +185,10 @@ el("footer").onclick = (e) => {
       "- *Total = " +
       total +
       "*\n" +
-      "_________________________" +
+      "-------------------------" +
       "\n" +
-      results2;
-    "\n" +
+      results2 +
+      "\n" +
       "https://1drv.ms/x/c/2812548f34b84739/IQCdYTpFOrvGRZmNgRCfxiIaAQdUlTSoXDMMMA0GLtLjgWI?e=hkifX3";
 
     console.log(results);
