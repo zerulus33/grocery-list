@@ -1,47 +1,81 @@
 const itemList = [
-  ["Bread", 40, 0],
+  ["Bread", 40, 0], //Regulars, 0
+  ["Milk", 77, 0],
+  ["Oats", 86, 0],
+  ["Biscuit", 40, 0],
   ["Kwai", 10, 0],
   ["Raja", 12, 0],
-  ["Chips", 10, 0],
-  ["Ice Cream", 10, 0],
-  ["Milk", 77, 0],
-  ["Coffee", 10, 0],
-  ["Biscuit", 40, 0],
-  ["Cupcake", 35, 0],
-  ["Lamington", 90, 0],
-  ["Oats", 86, 0],
-  ["Eggs (Half Tray)", 120, 0],
-  ["Chicken", 300, 0],
-  ["Breadcrumbs", 0, 0],
-  ["Potato", 20, 0],
+  ["Potato", 20, 0], //Ingredients, 6
   ["Onion", 50, 0],
-  ["Lemon", 20, 0],
   ["Dal", 90, 0],
   ["Sugar", 60, 0],
   ["Slasha", 105, 0],
-  ["Black Pepper (20g)", 35, 0],
+  ["Salt", 30, 0],
   ["Oil (0.7L)", 202, 0],
-  ["Pads", 42, 0],
-  ["Moisturizer", 0, 0],
+  ["Black Pepper (20g)", 35, 0],
+  ["Lemon", 20, 0],
+  ["Chicken", 300, 0],
+  ["Eggs (Half Tray)", 120, 0],
+  ["Breadcrumbs", 0, 0],
+  ["Coffee", 10, 0], //Snacks. 18
+  ["Cupcake", 35, 0],
+  ["Lamington", 90, 0],
+  ["Chips", 10, 0],
+  ["Ice Cream", 10, 0],
+  ["Moisturizer", 0, 0], // Personal Care, 23
   ["Deodorant", 125, 0],
-  ["Toothpaste", 100, 0],
-  ["Pears", 50, 0],
-  ["Toilet Paper", 100, 0],
-  ["Conditioner", 3, 0],
+  ["Pads", 42, 0],
+  ["Pears", 50, 0], //Household Items, 26
   ["Shampoo", 0, 0],
-  ["Dish Soap (4 nos.)", 110, 0],
+  ["Toothpaste", 100, 0],
+  ["Conditioner", 3, 0],
+  ["Toilet Paper", 100, 0],
   ["Green Scrubber", 0, 0],
+  ["Dish Soap (4 nos.)", 110, 0],
+  ["Cross (500mL)", 113, 0],
   ["Bandaid", 0, 0],
   ["Battery (Thinn)", 30, 0],
   ["Battery (Thicc)", 25, 0],
-  ["Cross (500mL)", 113, 0],
 ];
 const resultArr = Array.from(itemList);
 const totalArr = [];
+let total = 0;
 const el = (selector) => document.querySelector(selector);
 const elA = (selector) => document.querySelectorAll(selector);
 
 itemList.forEach((item, index) => {
+  switch (index) {
+    case 0: {
+      const h2 = document.createElement("h2");
+      document.body.appendChild(h2);
+      h2.innerText = "Regulars";
+      break;
+    }
+    case 6: {
+      const h2 = document.createElement("h2");
+      document.body.appendChild(h2);
+      h2.innerText = "Ingredients";
+      break;
+    }
+    case 18: {
+      const h2 = document.createElement("h2");
+      document.body.appendChild(h2);
+      h2.innerText = "Snacks";
+      break;
+    }
+    case 23: {
+      const h2 = document.createElement("h2");
+      document.body.appendChild(h2);
+      h2.innerText = "Personal Care";
+      break;
+    }
+    case 26: {
+      const h2 = document.createElement("h2");
+      document.body.appendChild(h2);
+      h2.innerText = "Extra";
+      break;
+    }
+  }
   const div = document.createElement("div");
   const buttonMinus = document.createElement("button");
   buttonMinus.className = "minus";
@@ -76,7 +110,7 @@ itemList.forEach((item, index) => {
     let amount = +input.parentElement.children[4].innerText.slice(1);
     totalArr[input.dataset.index] = input.value * amount;
     resultArr[input.dataset.index][2] = input.value;
-    let total = totalArr.reduce(
+    total = totalArr.reduce(
       (accumulator, currentValue) => accumulator + currentValue,
       0,
     );
@@ -90,7 +124,7 @@ itemList.forEach((item, index) => {
     let amount = +input.parentElement.children[4].innerText.slice(1);
     totalArr[input.dataset.index] = input.value * amount;
     resultArr[input.dataset.index][2] = input.value;
-    let total = totalArr.reduce(
+    total = totalArr.reduce(
       (accumulator, currentValue) => accumulator + currentValue,
       0,
     );
@@ -106,7 +140,7 @@ elA(".item > input").forEach(
       let amount = +input.parentElement.children[4].innerText.slice(1);
       totalArr[input.dataset.index] = e.target.value * amount;
       resultArr[input.dataset.index][2] = e.target.value;
-      let total = totalArr.reduce(
+      total = totalArr.reduce(
         (accumulator, currentValue) => accumulator + currentValue,
         0,
       );
@@ -122,15 +156,41 @@ async function writeClipboardText(text) {
   }
 }
 el("footer").onclick = (e) => {
-  let results = "";
+  let results1 = "";
+  let results2 = "";
 
-  resultArr.forEach((item) => {
+  let count = 0;
+  resultArr.forEach((item, index) => {
     if (item[2] != 0) {
-      results = results + "\n" + item[2] + "," + item[0] + "," + item[1];
+      count++;
+      if (count == 1) {
+        results1 = "- *" + item[0] + " x " + item[2] + "*";
+        const ddMMyyyy = new Date()
+          .toLocaleDateString("en-GB")
+          .replace(/\//g, "-");
+        results2 =
+          "k," + ddMMyyyy + "," + item[0] + "," + item[1] + "," + item[2];
+        console.log(results2);
+      } else {
+        results1 = results1 + "\n" + "- *" + item[0] + " x " + item[2] + "*";
+        results2 = results2 + "\nk,," + item[0] + "," + item[1] + "," + item[2];
+        console.log(index);
+      }
     }
   });
-  results = results.slice(1);
-  if (results != "") {
+  if (results1 != "") {
+    let results =
+      results1 +
+      "\n" +
+      "- *Total = " +
+      total +
+      "*\n" +
+      "_______________" +
+      "\n" +
+      results2;
+    "\n" +
+      "https://1drv.ms/x/c/2812548f34b84739/IQCdYTpFOrvGRZmNgRCfxiIaAQdUlTSoXDMMMA0GLtLjgWI?e=hkifX3";
+
     console.log(results);
     writeClipboardText(results);
     alert("Copied to clipboard!");

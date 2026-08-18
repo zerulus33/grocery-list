@@ -56,9 +56,24 @@ footer {
   display: flex;
   align-items: center;
 }
-
+.item > h3 {
+  padding-left: 10px;
+}
 button {
   padding: 5px;
   background-color: white;
   border: 1px solid;
+}
+h2 {
+  width: 95%;
+  text-align: left;
+  font-size: large;
+  text-transform: uppercase;
+  font-weight: 100;
+  border-bottom: 1px solid;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+h3 {
+  font-weight: 500;
 }
