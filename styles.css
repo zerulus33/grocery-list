@@ -68,6 +68,7 @@ footer {
   background-color: inherit;
   overflow-y: auto;
   scrollbar-width: none;
+  font-weight: 500;
 }
 button {
   padding: 5px;
@@ -80,11 +81,9 @@ h2 {
   text-transform: uppercase;
   font-weight: 100;
   border-bottom: 1px solid;
+  padding-bottom: 5px;
   margin-bottom: 10px;
   margin-top: 20px;
-}
-h3 {
-  font-weight: 500;
 }
 .menu {
   position: fixed;

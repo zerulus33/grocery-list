@@ -15,7 +15,7 @@ const itemList = [
   ["Black Pepper (20g)", 35, 0],
   ["Lemon", 20, 0],
   ["Chicken", 300, 0],
-  ["Eggs (Half Tray)", 120, 0],
+  ["Eggs (Half Tray)", 105, 0],
   ["Breadcrumbs", 0, 0],
   ["Coffee", 10, 0], //Snacks. 18
   ["Cupcake", 35, 0],
@@ -25,7 +25,7 @@ const itemList = [
   ["Moisturizer", 0, 0], // Personal Care, 23
   ["Deodorant", 125, 0],
   ["Pads", 42, 0],
-  ["Pears", 50, 0], //Household Items, 26
+  ["Pears", 50, 0], //Others, 26
   ["Shampoo", 0, 0],
   ["Toothpaste", 100, 0],
   ["Conditioner", 3, 0],
@@ -73,7 +73,7 @@ itemList.forEach((item, index) => {
     case 26: {
       const h2 = document.createElement("h2");
       document.body.appendChild(h2);
-      h2.innerText = "Extra";
+      h2.innerText = "Others";
       break;
     }
   }
