@@ -63,7 +63,10 @@ footer {
 }
 .item > h3 {
   padding-left: 10px;
+  margin-right: 40px;
   background-color: inherit;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 button {
   padding: 5px;

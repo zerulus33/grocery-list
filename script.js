@@ -38,6 +38,7 @@ const itemList = [
   ["Battery (Thicc)", 25, 0],
 ];
 const resultArr = Array.from(itemList);
+const extraArr = [];
 const totalArr = [];
 let total = 0;
 const el = (selector) => document.querySelector(selector);
