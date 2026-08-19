@@ -48,6 +48,7 @@ const totalArr = [];
 let total = 0;
 const el = (selector) => document.querySelector(selector);
 const elA = (selector) => document.querySelectorAll(selector);
+const make = (element) => document.createElement(element);
 
 itemList.forEach((item, index) => {
   switch (index) {
@@ -228,3 +229,39 @@ elA(".menu > p").forEach((option, index) => {
     }
   };
 });
+
+el("p#add").onclick = () => {
+  if (extraArr.length == 0) {
+    const h2 = document.createElement("h2");
+    document.body.appendChild(h2);
+    h2.innerText = "Extra";
+    extraArr.push([]);
+  }
+  const extra = make("div");
+  extra.className = "item extra";
+  const textInput = make("input");
+  textInput.type = "text";
+  textInput.value = "hi lol";
+  const numInput = make("input");
+  numInput.type = "number";
+  numInput.min = "0";
+  numInput.value = "33";
+  const x = make("p");
+  x.innerText = "X";
+  x.onclick = (e) => {
+    extra.remove();
+  };
+  extra.appendChild(numInput);
+  extra.appendChild(document.createTextNode("x"));
+  extra.appendChild(textInput);
+  extra.appendChild(x);
+  document.body.appendChild(extra);
+
+  window.scrollTo({
+    top:
+      document.body.lastElementChild.getBoundingClientRect().top +
+      window.scrollY -
+      60,
+    behavior: "smooth",
+  });
+};
