@@ -1,48 +1,52 @@
 const version = 1;
 
 const itemList = [
-  ["Bread", 40, 0], //Regulars, 0
-  ["Milk", 77, 0],
-  ["Oats", 86, 0],
-  ["Biscuit", 40, 0],
-  ["Kwai", 10, 0],
-  ["Raja", 12, 0],
-  ["Rice (1kg)", 50, 0], //Ingredients, 6
-  ["Potato", 20, 0],
-  ["Onion", 65, 0],
-  ["Dal", 90, 0],
-  ["Sugar", 65, 0],
-  ["Slasha", 105, 0],
-  ["Salt", 30, 0],
-  ["Oil (0.7L)", 145, 0],
-  ["Black Pepper (20g)", 35, 0],
-  ["Lemon", 20, 0],
-  ["Chicken", 300, 0],
-  ["Eggs (Half Tray)", 105, 0],
-  ["Breadcrumbs", 0, 0],
-  ["Coffee", 10, 0], //Snacks. 19
-  ["Jam", 25, 0],
-  ["Cupcake", 35, 0],
-  ["Lamington", 90, 0],
-  ["Chips", 10, 0],
-  ["Ice Cream", 10, 0],
-  ["Moisturizer", 0, 0], // Personal Care, 25
-  ["Deodorant", 125, 0],
-  ["Pads", 42, 0],
-  ["Facewash", 20, 0],
-  ["Pears", 50, 0],
-  ["Shampoo", 0, 0],
-  ["Toothpaste", 100, 0],
-  ["Conditioner", 3, 0],
-  ["Toilet Paper", 100, 0], //Others, 33
-  ["Garbage Bag (Medium)", 0, 0],
-  ["Garbage Bag (Large)", 0, 0],
-  ["Green Scrubber", 0, 0],
-  ["Dish Soap (4 nos.)", 110, 0],
-  ["Cross (500mL)", 113, 0],
-  ["Bandaid", 0, 0],
-  ["Battery (Thinn)", 30, 0],
-  ["Battery (Thicc)", 25, 0],
+  ["Bread", 40, 0, "Regulars"],
+  ["Milk", 77, 0, "Regulars"],
+  ["Oats", 86, 0, "Regulars"],
+  ["Biscuit", 40, 0, "Regulars"],
+  ["Kwai", 10, 0, "Regulars"],
+  ["Raja", 12, 0, "Regulars"],
+
+  ["Rice (1kg)", 50, 0, "Ingredients"],
+  ["Potato", 20, 0, "Ingredients"],
+  ["Onion", 65, 0, "Ingredients"],
+  ["Dal", 90, 0, "Ingredients"],
+  ["Sugar", 65, 0, "Ingredients"],
+  ["Slasha", 105, 0, "Ingredients"],
+  ["Salt", 30, 0, "Ingredients"],
+  ["Oil (0.7L)", 145, 0, "Ingredients"],
+  ["Black Pepper (20g)", 35, 0, "Ingredients"],
+  ["Lemon", 20, 0, "Ingredients"],
+  ["Chicken", 300, 0, "Ingredients"],
+  ["Eggs (Half Tray)", 105, 0, "Ingredients"],
+  ["Breadcrumbs", 0, 0, "Ingredients"],
+
+  ["Coffee", 10, 0, "Snacks"],
+  ["Jam", 25, 0, "Snacks"],
+  ["Cupcake", 35, 0, "Snacks"],
+  ["Lamington", 90, 0, "Snacks"],
+  ["Chips", 10, 0, "Snacks"],
+  ["Ice Cream", 10, 0, "Snacks"],
+
+  ["Moisturizer", 0, 0, "Personal Care"],
+  ["Deodorant", 125, 0, "Personal Care"],
+  ["Pads", 42, 0, "Personal Care"],
+  ["Facewash", 20, 0, "Personal Care"],
+  ["Pears", 50, 0, "Personal Care"],
+  ["Shampoo", 0, 0, "Personal Care"],
+  ["Toothpaste", 100, 0, "Personal Care"],
+  ["Conditioner", 3, 0, "Personal Care"],
+
+  ["Toilet Paper", 100, 0, "Others"],
+  ["Garbage Bag (Medium)", 0, 0, "Others"],
+  ["Garbage Bag (Large)", 0, 0, "Others"],
+  ["Green Scrubber", 0, 0, "Others"],
+  ["Dish Soap (4 nos.)", 110, 0, "Others"],
+  ["Cross (500mL)", 113, 0, "Others"],
+  ["Bandaid", 0, 0, "Others"],
+  ["Battery (Thinn)", 30, 0, "Others"],
+  ["Battery (Thicc)", 25, 0, "Others"],
 ];
 
 const resultArr = Array.from(itemList);
@@ -93,44 +97,18 @@ const displayUpdateLog = () => {
   document.body.appendChild(modal);
 };
 
-const currentVersion = localStorage.getItem("version");
-if (currentVersion != version) {
+if (localStorage.getItem("version") != version) {
   localStorage.setItem("version", version);
   displayUpdateLog();
 }
 
+let currentCategory = "";
 itemList.forEach((item, index) => {
-  switch (index) {
-    case 0: {
-      const h2 = make("h2");
-      document.body.appendChild(h2);
-      h2.innerText = "Regulars";
-      break;
-    }
-    case 6: {
-      const h2 = make("h2");
-      document.body.appendChild(h2);
-      h2.innerText = "Ingredients";
-      break;
-    }
-    case 19: {
-      const h2 = make("h2");
-      document.body.appendChild(h2);
-      h2.innerText = "Snacks";
-      break;
-    }
-    case 25: {
-      const h2 = make("h2");
-      document.body.appendChild(h2);
-      h2.innerText = "Personal Care";
-      break;
-    }
-    case 33: {
-      const h2 = make("h2");
-      document.body.appendChild(h2);
-      h2.innerText = "Others";
-      break;
-    }
+  if (currentCategory != item[3]) {
+    const h2 = make("h2");
+    document.body.appendChild(h2);
+    h2.innerText = item[3];
+    currentCategory = item[3];
   }
   const div = make("div");
   const buttonMinus = make("button");
@@ -250,11 +228,10 @@ el("footer").onclick = (e) => {
           results1 = results1 + "\n" + "- *" + name + " x " + quantity + "*";
           results2 = results2 + "\nk,," + name + "," + 0 + "," + quantity;
         }
-        extraResults = extraResults + `\n[${name},0,${quantity}]`;
+        extraResults = extraResults + `\n[${name},0,${quantity},""]`;
       }
     });
   }
-  console.log(extraResults);
   if (results1 != "") {
     let results =
       results1 +
