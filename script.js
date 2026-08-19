@@ -5,7 +5,8 @@ const itemList = [
   ["Biscuit", 40, 0],
   ["Kwai", 10, 0],
   ["Raja", 12, 0],
-  ["Potato", 20, 0], //Ingredients, 6
+  ["Rice (1kg)", 50, 0], //Ingredients, 6
+  ["Potato", 20, 0],
   ["Onion", 50, 0],
   ["Dal", 90, 0],
   ["Sugar", 60, 0],
@@ -17,19 +18,23 @@ const itemList = [
   ["Chicken", 300, 0],
   ["Eggs (Half Tray)", 105, 0],
   ["Breadcrumbs", 0, 0],
-  ["Coffee", 10, 0], //Snacks. 18
+  ["Coffee", 10, 0], //Snacks. 19
+  ["Jam", 25, 0],
   ["Cupcake", 35, 0],
   ["Lamington", 90, 0],
   ["Chips", 10, 0],
   ["Ice Cream", 10, 0],
-  ["Moisturizer", 0, 0], // Personal Care, 23
+  ["Moisturizer", 0, 0], // Personal Care, 25
   ["Deodorant", 125, 0],
   ["Pads", 42, 0],
-  ["Pears", 50, 0], //Others, 26
+  ["Facewash", 20, 0],
+  ["Pears", 50, 0],
   ["Shampoo", 0, 0],
   ["Toothpaste", 100, 0],
   ["Conditioner", 3, 0],
-  ["Toilet Paper", 100, 0],
+  ["Toilet Paper", 100, 0], //Others, 33
+  ["Garbage Bag (Medium)", 0, 0],
+  ["Garbage Bag (Large)", 0, 0],
   ["Green Scrubber", 0, 0],
   ["Dish Soap (4 nos.)", 110, 0],
   ["Cross (500mL)", 113, 0],
@@ -58,19 +63,19 @@ itemList.forEach((item, index) => {
       h2.innerText = "Ingredients";
       break;
     }
-    case 18: {
+    case 19: {
       const h2 = document.createElement("h2");
       document.body.appendChild(h2);
       h2.innerText = "Snacks";
       break;
     }
-    case 23: {
+    case 25: {
       const h2 = document.createElement("h2");
       document.body.appendChild(h2);
       h2.innerText = "Personal Care";
       break;
     }
-    case 26: {
+    case 33: {
       const h2 = document.createElement("h2");
       document.body.appendChild(h2);
       h2.innerText = "Others";
