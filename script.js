@@ -12,7 +12,7 @@ const itemList = [
   ["Sugar", 60, 0],
   ["Slasha", 105, 0],
   ["Salt", 30, 0],
-  ["Oil (0.7L)", 202, 0],
+  ["Oil (0.7L)", 145, 0],
   ["Black Pepper (20g)", 35, 0],
   ["Lemon", 20, 0],
   ["Chicken", 300, 0],
@@ -43,7 +43,6 @@ const itemList = [
   ["Battery (Thicc)", 25, 0],
 ];
 const resultArr = Array.from(itemList);
-const extraArr = [];
 const totalArr = [];
 let total = 0;
 const el = (selector) => document.querySelector(selector);
@@ -53,46 +52,46 @@ const make = (element) => document.createElement(element);
 itemList.forEach((item, index) => {
   switch (index) {
     case 0: {
-      const h2 = document.createElement("h2");
+      const h2 = make("h2");
       document.body.appendChild(h2);
       h2.innerText = "Regulars";
       break;
     }
     case 6: {
-      const h2 = document.createElement("h2");
+      const h2 = make("h2");
       document.body.appendChild(h2);
       h2.innerText = "Ingredients";
       break;
     }
     case 19: {
-      const h2 = document.createElement("h2");
+      const h2 = make("h2");
       document.body.appendChild(h2);
       h2.innerText = "Snacks";
       break;
     }
     case 25: {
-      const h2 = document.createElement("h2");
+      const h2 = make("h2");
       document.body.appendChild(h2);
       h2.innerText = "Personal Care";
       break;
     }
     case 33: {
-      const h2 = document.createElement("h2");
+      const h2 = make("h2");
       document.body.appendChild(h2);
       h2.innerText = "Others";
       break;
     }
   }
-  const div = document.createElement("div");
-  const buttonMinus = document.createElement("button");
+  const div = make("div");
+  const buttonMinus = make("button");
   buttonMinus.className = "minus";
   buttonMinus.innerText = "-";
-  const buttonAdd = document.createElement("button");
+  const buttonAdd = make("button");
   buttonAdd.className = "add";
   buttonAdd.innerText = "+";
-  const input = document.createElement("input");
-  const h3 = document.createElement("h3");
-  const p = document.createElement("p");
+  const input = make("input");
+  const h3 = make("h3");
+  const p = make("p");
   input.type = "number";
   input.value = "0";
   input.min = "0";
@@ -165,26 +164,47 @@ async function writeClipboardText(text) {
 el("footer").onclick = (e) => {
   let results1 = "";
   let results2 = "";
+  let extraResults = "";
 
   let count = 0;
   resultArr.forEach((item, index) => {
     if (item[2] != 0) {
-      count++;
-      if (count == 1) {
+      if (count == 0) {
+        count++;
         results1 = "- *" + item[0] + " x " + item[2] + "*";
         const ddMMyyyy = new Date()
           .toLocaleDateString("en-GB")
           .replace(/\//g, "-");
         results2 =
           "k," + ddMMyyyy + "," + item[0] + "," + item[1] + "," + item[2];
-        console.log(results2);
       } else {
         results1 = results1 + "\n" + "- *" + item[0] + " x " + item[2] + "*";
         results2 = results2 + "\nk,," + item[0] + "," + item[1] + "," + item[2];
-        console.log(index);
       }
     }
   });
+  if (elA(".extra").length != 0) {
+    elA(".extra").forEach((extraItem) => {
+      let name = extraItem.children[0].value;
+      let quantity = +extraItem.children[1].value;
+
+      if (quantity != 0) {
+        if (count == 0) {
+          count++;
+          results1 = "- *" + name + " x " + quantity + "*";
+          const ddMMyyyy = new Date()
+            .toLocaleDateString("en-GB")
+            .replace(/\//g, "-");
+          results2 = "k," + ddMMyyyy + "," + name + "," + 0 + "," + quantity;
+        } else {
+          results1 = results1 + "\n" + "- *" + name + " x " + quantity + "*";
+          results2 = results2 + "\nk,," + name + "," + 0 + "," + quantity;
+        }
+        extraResults = extraResults + `\n[${name},0,${quantity}]`;
+      }
+    });
+  }
+  console.log(extraResults);
   if (results1 != "") {
     let results =
       results1 +
@@ -198,11 +218,7 @@ el("footer").onclick = (e) => {
       "\n" +
       "https://1drv.ms/x/c/2812548f34b84739/IQCdYTpFOrvGRZmNgRCfxiIaAQdUlTSoXDMMMA0GLtLjgWI?e=hkifX3";
 
-    if (extraArr.length > 0) {
-      extraArr.forEach((item) => {
-        results = results + "\n[" + item + "]";
-      });
-    }
+    results = extraResults != "" ? results + extraResults : results;
     console.log(results);
     writeClipboardText(results);
     alert("Copied to clipboard!");
@@ -217,43 +233,43 @@ el("header").onclick = () => {
 elA(".menu > p").forEach((option, index) => {
   option.onclick = () => {
     option.parentElement.style.top = "-100%";
-    if (index == 5) {
-      let itemName = prompt("Item name?");
-      let itemQty = prompt("How many?");
-      extraArr.push([itemName, 0, +itemQty]);
-    } else {
-      window.scrollTo({
-        top: elA("h2")[index].getBoundingClientRect().top + window.scrollY - 60,
-        behavior: "smooth",
-      });
-    }
+    window.scrollTo({
+      top: elA("h2")[index].getBoundingClientRect().top + window.scrollY - 60,
+      behavior: "smooth",
+    });
   };
 });
 
 el("p#add").onclick = () => {
-  if (extraArr.length == 0) {
-    const h2 = document.createElement("h2");
+  if (elA(".extra").length == 0) {
+    const h2 = make("h2");
     document.body.appendChild(h2);
     h2.innerText = "Extra";
-    extraArr.push([]);
   }
   const extra = make("div");
   extra.className = "item extra";
   const textInput = make("input");
   textInput.type = "text";
-  textInput.value = "hi lol";
+  textInput.placeholder = "Item name...";
   const numInput = make("input");
   numInput.type = "number";
   numInput.min = "0";
-  numInput.value = "33";
+  numInput.value = "1";
   const x = make("p");
   x.innerText = "X";
   x.onclick = (e) => {
+    let confirmState = confirm("Delete " + textInput.value + "?");
+    if (!confirmState) {
+      return;
+    }
+    if (elA(".extra").length == 1) {
+      el("h2:nth-last-of-type(1)").remove();
+    }
     extra.remove();
   };
-  extra.appendChild(numInput);
-  extra.appendChild(document.createTextNode("x"));
   extra.appendChild(textInput);
+  extra.appendChild(document.createTextNode("x"));
+  extra.appendChild(numInput);
   extra.appendChild(x);
   document.body.appendChild(extra);
 
