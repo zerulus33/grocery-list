@@ -1,3 +1,5 @@
+const version = 1;
+
 const itemList = [
   ["Bread", 40, 0], //Regulars, 0
   ["Milk", 77, 0],
@@ -7,9 +9,9 @@ const itemList = [
   ["Raja", 12, 0],
   ["Rice (1kg)", 50, 0], //Ingredients, 6
   ["Potato", 20, 0],
-  ["Onion", 50, 0],
+  ["Onion", 65, 0],
   ["Dal", 90, 0],
-  ["Sugar", 60, 0],
+  ["Sugar", 65, 0],
   ["Slasha", 105, 0],
   ["Salt", 30, 0],
   ["Oil (0.7L)", 145, 0],
@@ -42,12 +44,60 @@ const itemList = [
   ["Battery (Thinn)", 30, 0],
   ["Battery (Thicc)", 25, 0],
 ];
+
 const resultArr = Array.from(itemList);
 const totalArr = [];
 let total = 0;
 const el = (selector) => document.querySelector(selector);
 const elA = (selector) => document.querySelectorAll(selector);
 const make = (element) => document.createElement(element);
+
+const updateLog = [
+  //
+  "Added update notification",
+  "Onion: 50 > 65",
+  "Sugar: 60 > 65",
+];
+const displayUpdateLog = () => {
+  const modal = make("div");
+  modal.className = "modal";
+  const backdrop = make("div");
+  backdrop.className = "backdrop";
+  const actual = make("div");
+  actual.className = "actual";
+  const h2 = make("h2");
+  h2.innerText = "Updated!";
+  const ul = make("ul");
+  const ok = make("button");
+  ok.innerText = "OK";
+
+  modal.appendChild(backdrop);
+  modal.appendChild(actual);
+  actual.appendChild(h2);
+  actual.appendChild(ul);
+  actual.appendChild(ok);
+
+  ok.onclick = (e) => {
+    e.target.parentElement.style.animation = "downandout 0.3s forwards";
+    setTimeout(() => {
+      e.target.parentElement.parentElement.remove();
+    }, 300);
+  };
+
+  updateLog.forEach((log) => {
+    const li = make("li");
+    li.innerText = log;
+    ul.appendChild(li);
+  });
+
+  document.body.appendChild(modal);
+};
+
+const currentVersion = localStorage.getItem("version");
+if (currentVersion != version) {
+  localStorage.setItem("version", version);
+  displayUpdateLog();
+}
 
 itemList.forEach((item, index) => {
   switch (index) {
