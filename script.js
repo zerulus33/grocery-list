@@ -1,4 +1,4 @@
-const version = 1;
+const version = 2;
 
 const itemList = [
   ["Bread", 40, 0, "Regulars"],
@@ -9,6 +9,7 @@ const itemList = [
   ["Raja", 12, 0, "Regulars"],
 
   ["Rice (1kg)", 50, 0, "Ingredients"],
+  ["Rice (30kg)", 1280, 0, "Ingredients"],
   ["Potato", 20, 0, "Ingredients"],
   ["Onion", 65, 0, "Ingredients"],
   ["Dal", 90, 0, "Ingredients"],
@@ -58,9 +59,7 @@ const make = (element) => document.createElement(element);
 
 const updateLog = [
   //
-  "Added update notification",
-  "Onion: 50 > 65",
-  "Sugar: 60 > 65",
+  "Added Rice (30 kg): 1280",
 ];
 const displayUpdateLog = () => {
   const modal = make("div");
@@ -211,7 +210,7 @@ el("footer").onclick = (e) => {
       }
     }
   });
-  if (elA(".extra").length != 0) {
+  if (elA(".extra").length != 0 && el(".extra > input").value != "") {
     elA(".extra").forEach((extraItem) => {
       let name = extraItem.children[0].value;
       let quantity = +extraItem.children[1].value;
@@ -259,6 +258,7 @@ el("header").onclick = () => {
 };
 elA(".menu > p").forEach((option, index) => {
   option.onclick = () => {
+    menuState = !menuState;
     option.parentElement.style.top = "-100%";
     window.scrollTo({
       top: elA("h2")[index].getBoundingClientRect().top + window.scrollY - 60,

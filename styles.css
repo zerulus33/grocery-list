@@ -134,7 +134,7 @@ p#add {
 .extra {
   justify-content: space-between;
 }
-.extra:nth-last-child(1) {
+.item:nth-last-child(1) {
   margin-bottom: 70px;
 }
 .extra > p {
