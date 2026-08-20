@@ -1,6 +1,57 @@
-const version = 2;
+let version = 2;
+const el = (selector) => document.querySelector(selector);
+const elA = (selector) => document.querySelectorAll(selector);
+const make = (element) => document.createElement(element);
 
-const itemList = [
+const backupUpdateLog = [
+  //
+  "Added Rice (30 kg): 1280",
+];
+
+const displayUpdateLog = (updateLog) => {
+  const modal = make("div");
+  modal.className = "modal";
+  const backdrop = make("div");
+  backdrop.className = "backdrop";
+  const actual = make("div");
+  actual.className = "actual";
+  const h2 = make("h2");
+  h2.innerText = "Updated!";
+  const ul = make("ul");
+  const ok = make("button");
+  ok.innerText = "OK";
+
+  modal.appendChild(backdrop);
+  modal.appendChild(actual);
+  actual.appendChild(h2);
+  actual.appendChild(ul);
+  actual.appendChild(ok);
+
+  ok.onclick = (e) => {
+    e.target.parentElement.style.animation = "downandout 0.3s forwards";
+    setTimeout(() => {
+      e.target.parentElement.parentElement.remove();
+    }, 300);
+  };
+
+  updateLog.forEach((log) => {
+    const li = make("li");
+    li.innerText = log;
+    ul.appendChild(li);
+  });
+
+  document.body.appendChild(modal);
+};
+
+if (localStorage.getItem("version") != version) {
+  localStorage.setItem("version", version);
+  displayUpdateLog(backupUpdateLog);
+}
+let secretCodeLOL = 0;
+const totalArr = [];
+let total = 0;
+
+let backupItemList = [
   ["Bread", 40, 0, "Regulars"],
   ["Milk", 77, 0, "Regulars"],
   ["Oats", 86, 0, "Regulars"],
@@ -50,124 +101,89 @@ const itemList = [
   ["Battery (Thicc)", 25, 0, "Others"],
 ];
 
-const resultArr = Array.from(itemList);
-const totalArr = [];
-let total = 0;
-const el = (selector) => document.querySelector(selector);
-const elA = (selector) => document.querySelectorAll(selector);
-const make = (element) => document.createElement(element);
+let resultArr = Array.from(backupItemList);
+generateList(backupItemList);
 
-const updateLog = [
-  //
-  "Added Rice (30 kg): 1280",
-];
-const displayUpdateLog = () => {
-  const modal = make("div");
-  modal.className = "modal";
-  const backdrop = make("div");
-  backdrop.className = "backdrop";
-  const actual = make("div");
-  actual.className = "actual";
-  const h2 = make("h2");
-  h2.innerText = "Updated!";
-  const ul = make("ul");
-  const ok = make("button");
-  ok.innerText = "OK";
+// database code
 
-  modal.appendChild(backdrop);
-  modal.appendChild(actual);
-  actual.appendChild(h2);
-  actual.appendChild(ul);
-  actual.appendChild(ok);
+const supabaseUrl = "https://sjjogtlekbccvupwgxiy.supabase.co";
+const supabaseKey = "sb_publishable_EOPuvPJM7Ws2VEiY8vHl_A_hMHFPL1K";
 
-  ok.onclick = (e) => {
-    e.target.parentElement.style.animation = "downandout 0.3s forwards";
-    setTimeout(() => {
-      e.target.parentElement.parentElement.remove();
-    }, 300);
-  };
+const supabase2 = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-  updateLog.forEach((log) => {
-    const li = make("li");
-    li.innerText = log;
-    ul.appendChild(li);
-  });
+async function saveItems(items) {
+  const { error } = await supabase2
+    .from("items_data")
+    .update({
+      items: items,
+    })
+    .eq("id", 1);
 
-  document.body.appendChild(modal);
-};
-
-if (localStorage.getItem("version") != version) {
-  localStorage.setItem("version", version);
-  displayUpdateLog();
+  if (error) {
+    console.error("Failed to save items:", error);
+  }
 }
 
-let currentCategory = "";
-itemList.forEach((item, index) => {
-  if (currentCategory != item[3]) {
-    const h2 = make("h2");
-    document.body.appendChild(h2);
-    h2.innerText = item[3];
-    currentCategory = item[3];
+async function loadItems() {
+  const { data, error } = await supabase2
+    .from("items_data")
+    .select("items, version, update_log")
+    .eq("id", 1)
+    .single();
+
+  if (error) {
+    return;
   }
-  const div = make("div");
-  const buttonMinus = make("button");
-  buttonMinus.className = "minus";
-  buttonMinus.innerText = "-";
-  const buttonAdd = make("button");
-  buttonAdd.className = "add";
-  buttonAdd.innerText = "+";
-  const input = make("input");
-  const h3 = make("h3");
-  const p = make("p");
-  input.type = "number";
-  input.value = "0";
-  input.min = "0";
-  input.dataset.index = index;
-  div.className = "item";
-  div.appendChild(buttonMinus);
-  div.appendChild(input);
-  div.appendChild(buttonAdd);
-  div.appendChild(h3);
-  div.appendChild(p);
-  h3.innerText = item[0];
-  p.innerText = "₹" + item[1];
-  document.body.appendChild(div);
-  totalArr.push(0);
-  totalArr.push(0);
+  backupItemList = data.items;
+  resultArr = Array.from(data.items);
+  generateList(data.items);
+  if (version != data.version) {
+    localStorage.setItem("version", data.version);
+    displayUpdateLog(data.update_log);
+  }
+}
 
-  buttonAdd.onclick = (e) => {
-    const input = e.target.parentElement.children[1];
-    input.value = +input.value + 1;
-    input.parentElement.style.background =
-      input.value == 0 ? "var(--bg)" : "seagreen";
-    let amount = +input.parentElement.children[4].innerText.slice(1);
-    totalArr[input.dataset.index] = input.value * amount;
-    resultArr[input.dataset.index][2] = input.value;
-    total = totalArr.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      0,
-    );
-    el("footer > p:nth-child(2)").innerText = "₹" + total;
-  };
-  buttonMinus.onclick = (e) => {
-    const input = e.target.parentElement.children[1];
-    input.value = input.value == 0 ? input.value : +input.value - 1;
-    input.parentElement.style.background =
-      input.value == 0 ? "var(--bg)" : "seagreen";
-    let amount = +input.parentElement.children[4].innerText.slice(1);
-    totalArr[input.dataset.index] = input.value * amount;
-    resultArr[input.dataset.index][2] = input.value;
-    total = totalArr.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      0,
-    );
-    el("footer > p:nth-child(2)").innerText = "₹" + total;
-  };
-});
+//loadItems();
 
-elA(".item > input").forEach(
-  (input) =>
-    (input.onchange = (e) => {
+function generateList(list) {
+  let currentCategory = "";
+  while (document.body.children.length > 4) {
+    document.body.children[4].remove();
+  }
+  list.forEach((item, index) => {
+    if (currentCategory != item[3]) {
+      const h2 = make("h2");
+      document.body.appendChild(h2);
+      h2.innerText = item[3];
+      currentCategory = item[3];
+    }
+    const div = make("div");
+    const buttonMinus = make("button");
+    buttonMinus.className = "minus";
+    buttonMinus.innerText = "-";
+    const buttonAdd = make("button");
+    buttonAdd.className = "add";
+    buttonAdd.innerText = "+";
+    const input = make("input");
+    const h3 = make("h3");
+    const p = make("p");
+    input.type = "number";
+    input.value = "0";
+    input.min = "0";
+    input.dataset.index = index;
+    div.className = "item";
+    div.appendChild(buttonMinus);
+    div.appendChild(input);
+    div.appendChild(buttonAdd);
+    div.appendChild(h3);
+    div.appendChild(p);
+    h3.innerText = item[0];
+    p.innerText = "₹" + item[1];
+    document.body.appendChild(div);
+    totalArr.push(0);
+    totalArr.push(0);
+
+    input.onchange = (e) => {
       input.parentElement.style.background =
         e.target.value == 0 ? "var(--bg)" : "seagreen";
       let amount = +input.parentElement.children[4].innerText.slice(1);
@@ -178,8 +194,37 @@ elA(".item > input").forEach(
         0,
       );
       el("footer > p:nth-child(2)").innerText = "₹" + total;
-    }),
-);
+    };
+    buttonAdd.onclick = (e) => {
+      const input = e.target.parentElement.children[1];
+      input.value = +input.value + 1;
+      input.parentElement.style.background =
+        input.value == 0 ? "var(--bg)" : "seagreen";
+      let amount = +input.parentElement.children[4].innerText.slice(1);
+      totalArr[input.dataset.index] = input.value * amount;
+      resultArr[input.dataset.index][2] = input.value;
+      total = totalArr.reduce(
+        (accumulator, currentValue) => accumulator + currentValue,
+        0,
+      );
+      el("footer > p:nth-child(2)").innerText = "₹" + total;
+    };
+    buttonMinus.onclick = (e) => {
+      const input = e.target.parentElement.children[1];
+      input.value = input.value == 0 ? input.value : +input.value - 1;
+      input.parentElement.style.background =
+        input.value == 0 ? "var(--bg)" : "seagreen";
+      let amount = +input.parentElement.children[4].innerText.slice(1);
+      totalArr[input.dataset.index] = input.value * amount;
+      resultArr[input.dataset.index][2] = input.value;
+      total = totalArr.reduce(
+        (accumulator, currentValue) => accumulator + currentValue,
+        0,
+      );
+      el("footer > p:nth-child(2)").innerText = "₹" + total;
+    };
+  });
+}
 
 async function writeClipboardText(text) {
   try {
