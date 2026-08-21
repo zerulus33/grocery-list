@@ -53,7 +53,6 @@ let codeItemList = [
   ["Battery (Thinn)", 30, 0, "Others"],
   ["Battery (Thicc)", 25, 0, "Others"],
 ];
-let secretCodeLOL = 0;
 
 let resultArr = [];
 const totalArr = [];
@@ -70,7 +69,10 @@ const displayModal = (type = "loader", log) => {
   modal.appendChild(actual);
   document.body.appendChild(modal);
 
-  if (type == "log") {
+  if (type == "loader") {
+    actual.className = "actual loader";
+  } else if (type == "log") {
+    console.log(1);
     actual.className = "actual log";
     const h2 = make("h2");
     h2.innerText = "Updated!";
@@ -94,8 +96,6 @@ const displayModal = (type = "loader", log) => {
       li.innerText = log;
       ul.appendChild(li);
     });
-  } else if (type == "loader") {
-    actual.className = "actual loader";
   }
 };
 displayModal();
@@ -106,98 +106,52 @@ const supabaseUrl = "https://sjjogtlekbccvupwgxiy.supabase.co";
 const supabaseKey = "sb_publishable_EOPuvPJM7Ws2VEiY8vHl_A_hMHFPL1K";
 const supabase2 = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-async function saveItems(items) {
-  const { error } = await supabase2
-    .from("items_data")
-    .update({
-      items: items,
-    })
-    .eq("id", 1);
-
-  if (error) {
-    console.error("Failed to save items:", error);
-  }
-}
-
 async function loadItems() {
-  const { data, error } = await supabase2
-    .from("items_data")
-    .select("items, version, update_log")
-    .eq("id", 1)
-    .single();
+  try {
+    ({ data, error } = await Promise.race([
+      supabase2
+        .from("items_data")
+        .select("items, version, update_log")
+        .eq("id", 1)
+        .single(),
 
-  if (error) {
-    if (localStorage.getItem("version") != null) {
-      let localVersion = +localStorage.getItem("version");
-      let localList;
-      if (localVersion < codeVersion) {
-        localStorage.setItem("list", codeItemList);
-        localStorage.setItem("version", codeVersion);
-        displayModal("log", codeLog);
-      }
-      localList = JSON.parse(localStorage.getItem("list"));
-      generateList(localList);
-      if (localVersion < codeVersion) {
-        displayModal("log", data.update_log);
-      }
-    }
-    return;
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("TIMEOUT")), 3000),
+      ),
+    ]));
+  } catch (e) {
+    error = e;
   }
-  if (localStorage.getItem("version") != null) {
+  // if (true) {
+  if (error) {
     let localVersion = +localStorage.getItem("version");
     let localList;
-    if (localVersion < +data.version) {
-      localStorage.setItem("list", JSON.stringify(data.items));
-      localStorage.setItem("version", data.version);
-      displayModal("log", data.update_log);
+    if (localVersion < codeVersion) {
+      localStorage.setItem("list", codeItemList);
+      localStorage.setItem("version", codeVersion);
     }
     localList = JSON.parse(localStorage.getItem("list"));
     generateList(localList);
-    if (localVersion < +data.version) {
-      displayModal("log", data.update_log);
+    resultArr = Array.from(localList);
+    if (localVersion < codeVersion) {
+      displayModal("log", codeLog);
     }
+    return;
   }
-}
-// loadItems();
-if (localStorage.getItem("version") != null) {
   let localVersion = +localStorage.getItem("version");
   let localList;
-  if (true) {
-    localStorage.setItem("list", JSON.stringify(codeItemList));
-    localStorage.setItem("version", codeVersion);
-    displayModal("log", codeLog);
+  if (localVersion < +data.version) {
+    localStorage.setItem("list", JSON.stringify(data.items));
+    localStorage.setItem("version", data.version);
   }
   localList = JSON.parse(localStorage.getItem("list"));
   generateList(localList);
-  if (true) {
+  resultArr = Array.from(localList);
+  if (localVersion < +data.version) {
     displayModal("log", data.update_log);
   }
 }
-
-// if (localStorage.getItem("version") != null) {
-//   // displayUpdateLog(backupUpdateLog);
-// } else {
-//   localStorage.setItem("version", backupVersion);
-// }
-// if (localStorage.getItem("backupList") != null) {
-//   backupItemList = JSON.parse(localStorage.getItem("backupList"));
-//   resultArr = Array.from(backupItemList);
-//   // generateList(backupItemList);
-// } else {
-//   localStorage.setItem("backupList", JSON.stringify(backupItemList));
-//   // generateList(backupItemList);
-// }
-
-function updateItems(data) {
-  const answer = confirm("Refresh with latest data?");
-  if (answer) {
-    resultArr = Array.from(data.items);
-    generateList(data.items);
-    displayUpdateLog(data.update_log);
-  }
-}
-
-// loadItems();
+loadItems();
 
 function generateList(list) {
   let currentCategory = "";
