@@ -55,8 +55,6 @@ let codeItemList = [
 ];
 
 let resultArr = [];
-const totalArr = [];
-let total = 0;
 
 const displayModal = (type = "loader", log) => {
   const modal = make("div");
@@ -126,14 +124,14 @@ async function loadItems() {
   if (error) {
     let localVersion = +localStorage.getItem("version");
     let localList;
-    if (localVersion < codeVersion) {
+    if (localVersion != codeVersion) {
       localStorage.setItem("list", codeItemList);
       localStorage.setItem("version", codeVersion);
     }
     localList = JSON.parse(localStorage.getItem("list"));
     generateList(localList);
     resultArr = Array.from(localList);
-    if (localVersion < codeVersion) {
+    if (localVersion != codeVersion) {
       displayModal("log", codeLog);
     }
     return;
@@ -152,6 +150,10 @@ async function loadItems() {
   }
 }
 loadItems();
+
+const getTotal = () => {
+  return resultArr.reduce((a, c) => a + +c[1] * c[2], 0);
+};
 
 function generateList(list) {
   let currentCategory = "";
@@ -178,7 +180,6 @@ function generateList(list) {
     input.type = "number";
     input.value = "0";
     input.min = "0";
-    input.dataset.index = index;
     div.className = "item";
     div.appendChild(buttonMinus);
     div.appendChild(input);
@@ -188,48 +189,22 @@ function generateList(list) {
     h3.innerText = item[0];
     p.innerText = "₹" + item[1];
     document.body.appendChild(div);
-    totalArr.push(0);
-    totalArr.push(0);
 
-    input.onchange = (e) => {
-      input.parentElement.style.background =
-        e.target.value == 0 ? "var(--bg)" : "seagreen";
-      let amount = +input.parentElement.children[4].innerText.slice(1);
-      totalArr[input.dataset.index] = e.target.value * amount;
-      resultArr[input.dataset.index][2] = e.target.value;
-      total = totalArr.reduce(
-        (accumulator, currentValue) => accumulator + currentValue,
-        0,
-      );
-      el("footer > p:nth-child(2)").innerText = "₹" + total;
+    const updateTotal = () => {
+      div.style.background = input.value == 0 ? "var(--bg)" : "seagreen";
+      resultArr[index][2] = input.value;
+      el("footer > p:nth-child(2)").innerText = "₹" + getTotal();
     };
-    buttonAdd.onclick = (e) => {
-      const input = e.target.parentElement.children[1];
+    input.onchange = () => {
+      updateTotal();
+    };
+    buttonAdd.onclick = () => {
       input.value = +input.value + 1;
-      input.parentElement.style.background =
-        input.value == 0 ? "var(--bg)" : "seagreen";
-      let amount = +input.parentElement.children[4].innerText.slice(1);
-      totalArr[input.dataset.index] = input.value * amount;
-      resultArr[input.dataset.index][2] = input.value;
-      total = totalArr.reduce(
-        (accumulator, currentValue) => accumulator + currentValue,
-        0,
-      );
-      el("footer > p:nth-child(2)").innerText = "₹" + total;
+      updateTotal();
     };
-    buttonMinus.onclick = (e) => {
-      const input = e.target.parentElement.children[1];
+    buttonMinus.onclick = () => {
       input.value = input.value == 0 ? input.value : +input.value - 1;
-      input.parentElement.style.background =
-        input.value == 0 ? "var(--bg)" : "seagreen";
-      let amount = +input.parentElement.children[4].innerText.slice(1);
-      totalArr[input.dataset.index] = input.value * amount;
-      resultArr[input.dataset.index][2] = input.value;
-      total = totalArr.reduce(
-        (accumulator, currentValue) => accumulator + currentValue,
-        0,
-      );
-      el("footer > p:nth-child(2)").innerText = "₹" + total;
+      updateTotal();
     };
   });
 }
@@ -241,6 +216,7 @@ async function writeClipboardText(text) {
     console.error(error.message);
   }
 }
+
 el("footer").onclick = (e) => {
   let results1 = "";
   let results2 = "";
@@ -289,13 +265,12 @@ el("footer").onclick = (e) => {
       results1 +
       "\n" +
       "- *Total = " +
-      total +
+      getTotal() +
       "*\n" +
       "-------------------------" +
       "\n" +
       results2 +
-      "\n" +
-      "https://1drv.ms/x/c/2812548f34b84739/IQCdYTpFOrvGRZmNgRCfxiIaAQdUlTSoXDMMMA0GLtLjgWI?e=hkifX3";
+      "\n-------------------------";
 
     results = extraResults != "" ? results + extraResults : results;
     console.log(results);
@@ -309,6 +284,7 @@ el("header").onclick = () => {
   el(".menu").style.top = menuState ? "-100%" : "50px";
   menuState = !menuState;
 };
+
 elA(".menu > p").forEach((option, index) => {
   option.onclick = () => {
     menuState = !menuState;
