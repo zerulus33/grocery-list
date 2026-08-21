@@ -1,57 +1,10 @@
-let version = 2;
 const el = (selector) => document.querySelector(selector);
 const elA = (selector) => document.querySelectorAll(selector);
 const make = (element) => document.createElement(element);
 
-const backupUpdateLog = [
-  //
-  "Added Rice (30 kg): 1280",
-];
-
-const displayUpdateLog = (updateLog) => {
-  const modal = make("div");
-  modal.className = "modal";
-  const backdrop = make("div");
-  backdrop.className = "backdrop";
-  const actual = make("div");
-  actual.className = "actual";
-  const h2 = make("h2");
-  h2.innerText = "Updated!";
-  const ul = make("ul");
-  const ok = make("button");
-  ok.innerText = "OK";
-
-  modal.appendChild(backdrop);
-  modal.appendChild(actual);
-  actual.appendChild(h2);
-  actual.appendChild(ul);
-  actual.appendChild(ok);
-
-  ok.onclick = (e) => {
-    e.target.parentElement.style.animation = "downandout 0.3s forwards";
-    setTimeout(() => {
-      e.target.parentElement.parentElement.remove();
-    }, 300);
-  };
-
-  updateLog.forEach((log) => {
-    const li = make("li");
-    li.innerText = log;
-    ul.appendChild(li);
-  });
-
-  document.body.appendChild(modal);
-};
-
-if (localStorage.getItem("version") != version) {
-  localStorage.setItem("version", version);
-  displayUpdateLog(backupUpdateLog);
-}
-let secretCodeLOL = 0;
-const totalArr = [];
-let total = 0;
-
-let backupItemList = [
+let codeVersion = 1;
+let codeLog = [""];
+let codeItemList = [
   ["Bread", 40, 0, "Regulars"],
   ["Milk", 77, 0, "Regulars"],
   ["Oats", 86, 0, "Regulars"],
@@ -100,15 +53,57 @@ let backupItemList = [
   ["Battery (Thinn)", 30, 0, "Others"],
   ["Battery (Thicc)", 25, 0, "Others"],
 ];
+let secretCodeLOL = 0;
 
-let resultArr = Array.from(backupItemList);
-generateList(backupItemList);
+let resultArr = [];
+const totalArr = [];
+let total = 0;
+
+const displayModal = (type = "loader", log) => {
+  const modal = make("div");
+  modal.className = "modal";
+  const backdrop = make("div");
+  backdrop.className = "backdrop";
+  const actual = make("div");
+  actual.className = "actual";
+  modal.appendChild(backdrop);
+  modal.appendChild(actual);
+  document.body.appendChild(modal);
+
+  if (type == "log") {
+    actual.className = "actual log";
+    const h2 = make("h2");
+    h2.innerText = "Updated!";
+    const ul = make("ul");
+    const ok = make("button");
+    ok.innerText = "OK";
+
+    actual.appendChild(h2);
+    actual.appendChild(ul);
+    actual.appendChild(ok);
+
+    ok.onclick = (e) => {
+      e.target.parentElement.style.animation = "downandout 0.3s forwards";
+      setTimeout(() => {
+        e.target.parentElement.parentElement.remove();
+      }, 300);
+    };
+
+    log.forEach((log) => {
+      const li = make("li");
+      li.innerText = log;
+      ul.appendChild(li);
+    });
+  } else if (type == "loader") {
+    actual.className = "actual loader";
+  }
+};
+displayModal();
 
 // database code
 
 const supabaseUrl = "https://sjjogtlekbccvupwgxiy.supabase.co";
 const supabaseKey = "sb_publishable_EOPuvPJM7Ws2VEiY8vHl_A_hMHFPL1K";
-
 const supabase2 = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 async function saveItems(items) {
@@ -132,18 +127,77 @@ async function loadItems() {
     .single();
 
   if (error) {
+    if (localStorage.getItem("version") != null) {
+      let localVersion = +localStorage.getItem("version");
+      let localList;
+      if (localVersion < codeVersion) {
+        localStorage.setItem("list", codeItemList);
+        localStorage.setItem("version", codeVersion);
+        displayModal("log", codeLog);
+      }
+      localList = JSON.parse(localStorage.getItem("list"));
+      generateList(localList);
+      if (localVersion < codeVersion) {
+        displayModal("log", data.update_log);
+      }
+    }
     return;
   }
-  backupItemList = data.items;
-  resultArr = Array.from(data.items);
-  generateList(data.items);
-  if (version != data.version) {
-    localStorage.setItem("version", data.version);
+  if (localStorage.getItem("version") != null) {
+    let localVersion = +localStorage.getItem("version");
+    let localList;
+    if (localVersion < +data.version) {
+      localStorage.setItem("list", JSON.stringify(data.items));
+      localStorage.setItem("version", data.version);
+      displayModal("log", data.update_log);
+    }
+    localList = JSON.parse(localStorage.getItem("list"));
+    generateList(localList);
+    if (localVersion < +data.version) {
+      displayModal("log", data.update_log);
+    }
+  }
+}
+// loadItems();
+if (localStorage.getItem("version") != null) {
+  let localVersion = +localStorage.getItem("version");
+  let localList;
+  if (true) {
+    localStorage.setItem("list", JSON.stringify(codeItemList));
+    localStorage.setItem("version", codeVersion);
+    displayModal("log", codeLog);
+  }
+  localList = JSON.parse(localStorage.getItem("list"));
+  generateList(localList);
+  if (true) {
+    displayModal("log", data.update_log);
+  }
+}
+
+// if (localStorage.getItem("version") != null) {
+//   // displayUpdateLog(backupUpdateLog);
+// } else {
+//   localStorage.setItem("version", backupVersion);
+// }
+// if (localStorage.getItem("backupList") != null) {
+//   backupItemList = JSON.parse(localStorage.getItem("backupList"));
+//   resultArr = Array.from(backupItemList);
+//   // generateList(backupItemList);
+// } else {
+//   localStorage.setItem("backupList", JSON.stringify(backupItemList));
+//   // generateList(backupItemList);
+// }
+
+function updateItems(data) {
+  const answer = confirm("Refresh with latest data?");
+  if (answer) {
+    resultArr = Array.from(data.items);
+    generateList(data.items);
     displayUpdateLog(data.update_log);
   }
 }
 
-//loadItems();
+// loadItems();
 
 function generateList(list) {
   let currentCategory = "";
