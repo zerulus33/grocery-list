@@ -37,7 +37,8 @@ footer {
   padding: 0 20px 0 20px;
   font-weight: 600;
 }
-.item {
+.item,
+.editing-item {
   position: relative;
   display: flex;
   justify-content: flex-start;
@@ -134,10 +135,12 @@ p#add {
 .extra {
   justify-content: space-between;
 }
-.item:nth-last-child(1) {
+.item:nth-last-child(1),
+.editing-item:nth-last-child(1) {
   margin-bottom: 70px;
 }
-.extra > p {
+.extra > p,
+.editing-item > p {
   position: inherit;
   right: 0;
   background-color: red;
@@ -232,4 +235,17 @@ p#add {
   to {
     clip-path: inset(0 -1ch 0 0);
   }
+}
+.editing-item > *:not(p) {
+  width: 40%;
+  padding: 10px;
+  border: 1px solid;
+}
+.sort-div {
+  display: flex;
+  flex-direction: column;
+  width: min-content !important;
+  border: none !important;
+  gap: 5px;
+  margin: -20px -10px -20px -10px;
 }
