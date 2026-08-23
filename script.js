@@ -764,7 +764,7 @@ elA(".menu > p").forEach((option, index) => {
         saveItems(localList);
         generateList();
       } else {
-        const password = confirm("Password?");
+        const password = prompt("Password?");
         if (password == "lol") {
           // if (password) {
           // if (true) {
