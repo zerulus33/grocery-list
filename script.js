@@ -476,6 +476,7 @@ async function saveItems(items) {
   if (error) {
     alert("ERROR!");
   }
+  localStorage.setItem("list", JSON.stringify(localList));
   localStorage.setItem("version", localVersion);
 }
 
