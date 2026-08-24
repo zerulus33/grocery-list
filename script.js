@@ -719,9 +719,8 @@ elA(".menu > p").forEach((option, index) => {
         elA(".price-input").forEach((input) => (input.disabled = true));
         el("header").innerHTML = "<b>GROCERIES</b>";
         option.innerText = "EDIT ITEMS";
-        const order = codeCategories;
 
-        getCategories().forEach((cat) => {
+        codeCategories.forEach((cat) => {
           let count = 1;
           elA(".editing-item").forEach((item, index) => {
             if (item.children[3].value == cat) {
@@ -758,7 +757,8 @@ elA(".menu > p").forEach((option, index) => {
         });
         localList.sort((a, b) => {
           const categorySort =
-            order.indexOf(a.category) - order.indexOf(b.category);
+            codeCategories.indexOf(a.category) -
+            codeCategories.indexOf(b.category);
           if (categorySort !== 0) return categorySort;
           return a.sortOrder - b.sortOrder;
         });
@@ -836,4 +836,55 @@ el("p#add").onclick = () => {
       60,
     behavior: "smooth",
   });
+};
+
+const logDiff = () => {
+  const logArr = [];
+  const test = () => {
+    l1.forEach((item) => {
+      let itemInSecondArr = l2.find((item2) => item2.uuid == item.uuid);
+
+      if (itemInSecondArr == null) {
+        logArr.push("DELETED: " + item.name);
+      } else {
+        if (itemInSecondArr.price != item.price) {
+          logArr.push(
+            item.name + ": " + item.price + " > " + itemInSecondArr.price,
+          );
+        }
+        if (itemInSecondArr.name != item.name) {
+          logArr.push(item.name + " > " + itemInSecondArr.name);
+        }
+        if (itemInSecondArr.category != item.category) {
+          logArr.push(
+            item.name + ": " + item.category + " > " + itemInSecondArr.category,
+          );
+        }
+      }
+    });
+    l2.forEach((item) => {
+      let itemInSecondArr = l1.find((item2) => item2.uuid == item.uuid);
+
+      if (itemInSecondArr == null) {
+        logArr.push("ADDED: " + item.name);
+      }
+    });
+    console.log(logArr);
+    logArr.sort((a, b) => {
+      const getPriority = (str) => {
+        const category = str.slice(0, 3);
+
+        if (category === "ADD") return 0;
+        if (category === "DEL") return 1;
+        return 2;
+      };
+
+      const categorySort = getPriority(a) - getPriority(b);
+
+      if (categorySort !== 0) return categorySort;
+
+      return a.localeCompare(b);
+    });
+    return logArr;
+  };
 };
