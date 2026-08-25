@@ -441,6 +441,9 @@ async function loadItems() {
       localVersion = codeVersion;
     }
     localList = JSON.parse(localStorage.getItem("list"));
+    localList.forEach((i, i2) => {
+      localList[i2].quantity = 0;
+    });
     generateList();
     resultArr = Array.from(localList);
     if (localVersion != codeVersion) {
@@ -450,6 +453,9 @@ async function loadItems() {
   }
   localVersion = +localStorage.getItem("version");
   localList = JSON.parse(localStorage.getItem("list"));
+  localList.forEach((i, i2) => {
+    localList[i2].quantity = 0;
+  });
   let oldList = [];
   let changed = false;
   if (localVersion < +data.version) {
@@ -757,6 +763,9 @@ elA(".menu > p").forEach((option, index) => {
               }
             }
           });
+        });
+        localList.forEach((i, i2) => {
+          localList[i2].quantity = 0;
         });
         localList.sort((a, b) => {
           const categorySort =
