@@ -449,18 +449,21 @@ async function loadItems() {
     return;
   }
   localVersion = +localStorage.getItem("version");
+  localList = JSON.parse(localStorage.getItem("list"));
+  let oldList = [];
   let changed = false;
   if (localVersion < +data.version) {
     changed = true;
+    oldList = Array.from(localList);
+    localList = data.items;
     localStorage.setItem("list", JSON.stringify(data.items));
     localStorage.setItem("version", data.version);
     localVersion = data.version;
   }
-  localList = JSON.parse(localStorage.getItem("list"));
   generateList();
   resultArr = Array.from(localList);
   if (changed) {
-    displayModal("log", data.update_log);
+    displayModal("log", logDiff(oldList, localList));
   }
 }
 loadItems();
@@ -838,53 +841,51 @@ el("p#add").onclick = () => {
   });
 };
 
-const logDiff = () => {
+const logDiff = (l1, l2) => {
   const logArr = [];
-  const test = () => {
-    l1.forEach((item) => {
-      let itemInSecondArr = l2.find((item2) => item2.uuid == item.uuid);
+  l1.forEach((item) => {
+    let itemInSecondArr = l2.find((item2) => item2.uuid == item.uuid);
 
-      if (itemInSecondArr == null) {
-        logArr.push("DELETED: " + item.name);
-      } else {
-        if (itemInSecondArr.price != item.price) {
-          logArr.push(
-            item.name + ": " + item.price + " > " + itemInSecondArr.price,
-          );
-        }
-        if (itemInSecondArr.name != item.name) {
-          logArr.push(item.name + " > " + itemInSecondArr.name);
-        }
-        if (itemInSecondArr.category != item.category) {
-          logArr.push(
-            item.name + ": " + item.category + " > " + itemInSecondArr.category,
-          );
-        }
+    if (itemInSecondArr == null) {
+      logArr.push("DELETED: " + item.name);
+    } else {
+      if (itemInSecondArr.price != item.price) {
+        logArr.push(
+          item.name + ": " + item.price + " > " + itemInSecondArr.price,
+        );
       }
-    });
-    l2.forEach((item) => {
-      let itemInSecondArr = l1.find((item2) => item2.uuid == item.uuid);
-
-      if (itemInSecondArr == null) {
-        logArr.push("ADDED: " + item.name);
+      if (itemInSecondArr.name != item.name) {
+        logArr.push(item.name + " > " + itemInSecondArr.name);
       }
-    });
-    console.log(logArr);
-    logArr.sort((a, b) => {
-      const getPriority = (str) => {
-        const category = str.slice(0, 3);
+      if (itemInSecondArr.category != item.category) {
+        logArr.push(
+          item.name + ": " + item.category + " > " + itemInSecondArr.category,
+        );
+      }
+    }
+  });
+  l2.forEach((item) => {
+    let itemInSecondArr = l1.find((item2) => item2.uuid == item.uuid);
 
-        if (category === "ADD") return 0;
-        if (category === "DEL") return 1;
-        return 2;
-      };
+    if (itemInSecondArr == null) {
+      logArr.push("ADDED: " + item.name);
+    }
+  });
+  console.log(logArr);
+  logArr.sort((a, b) => {
+    const getPriority = (str) => {
+      const category = str.slice(0, 3);
 
-      const categorySort = getPriority(a) - getPriority(b);
+      if (category === "ADD") return 0;
+      if (category === "DEL") return 1;
+      return 2;
+    };
 
-      if (categorySort !== 0) return categorySort;
+    const categorySort = getPriority(a) - getPriority(b);
 
-      return a.localeCompare(b);
-    });
-    return logArr;
-  };
+    if (categorySort !== 0) return categorySort;
+
+    return a.localeCompare(b);
+  });
+  return logArr;
 };
