@@ -454,7 +454,7 @@ async function loadItems() {
   let changed = false;
   if (localVersion < +data.version) {
     changed = true;
-    oldList = Array.from(localList);
+    oldList = localList != null ? Array.from(localList) : [];
     localList = data.items;
     localStorage.setItem("list", JSON.stringify(data.items));
     localStorage.setItem("version", data.version);
@@ -462,7 +462,7 @@ async function loadItems() {
   }
   generateList();
   resultArr = Array.from(localList);
-  if (changed) {
+  if (changed & (oldList.length != 0)) {
     displayModal("log", logDiff(oldList, localList));
   }
 }
