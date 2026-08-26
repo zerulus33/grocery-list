@@ -3,7 +3,7 @@ const elA = (selector) => document.querySelectorAll(selector);
 const make = (element) => document.createElement(element);
 
 let codeVersion = 1;
-let codeLog = [""];
+let codeLog = ["Loaded from backup. Try refreshing..."];
 let codeItemList = [
   {
     name: "Bread",
@@ -503,127 +503,258 @@ const getCategories = () => {
   }, 0);
   return categoriesArray;
 };
-function generateList() {
-  while (document.body.children.length > 4) {
-    document.body.children[4].remove();
+function generateList(searchValue = false) {
+  console.log(editingMode);
+  while (document.body.children.length > 5) {
+    document.body.children[5].remove();
   }
   let currentCategory = "";
-  if (!editingMode) {
-    localList.forEach((item, index) => {
-      if (currentCategory != item.category) {
-        const h2 = make("h2");
-        document.body.appendChild(h2);
-        h2.innerText = item.category;
-        currentCategory = item.category;
-      }
-      const div = make("div");
-      const buttonMinus = make("button");
-      buttonMinus.className = "minus";
-      buttonMinus.innerText = "-";
-      const buttonAdd = make("button");
-      buttonAdd.className = "add";
-      buttonAdd.innerText = "+";
-      const input = make("input");
-      const h3 = make("h3");
-      const p = make("p");
-      input.type = "number";
-      input.value = "0";
-      input.min = "0";
-      div.className = "item";
-      div.appendChild(buttonMinus);
-      div.appendChild(input);
-      div.appendChild(buttonAdd);
-      div.appendChild(h3);
-      div.appendChild(p);
-      h3.innerText = item.name;
-      p.innerText = "₹" + item.price;
-      document.body.appendChild(div);
+  if (searchValue) {
+    if (!editingMode) {
+      localList
+        .filter((i) =>
+          i.name.toLowerCase().startsWith(searchValue.toLowerCase()),
+        )
+        .forEach((item, index) => {
+          if (currentCategory != item.category) {
+            const h2 = make("h2");
+            document.body.appendChild(h2);
+            h2.innerText = item.category;
+            currentCategory = item.category;
+          }
+          const div = make("div");
+          const buttonMinus = make("button");
+          buttonMinus.className = "minus";
+          buttonMinus.innerText = "-";
+          const buttonAdd = make("button");
+          buttonAdd.className = "add";
+          buttonAdd.innerText = "+";
+          const input = make("input");
+          const h3 = make("h3");
+          const p = make("p");
+          input.type = "number";
+          input.value = "0";
+          input.min = "0";
+          div.className = "item";
+          div.appendChild(buttonMinus);
+          div.appendChild(input);
+          div.appendChild(buttonAdd);
+          div.appendChild(h3);
+          div.appendChild(p);
+          h3.innerText = item.name;
+          p.innerText = "₹" + item.price;
+          document.body.appendChild(div);
 
-      const updateTotal = () => {
-        div.style.background = input.value == 0 ? "var(--bg)" : "seagreen";
-        resultArr[findIndex(item)].quantity = +input.value;
-        el("footer > p:nth-child(2)").innerText = "₹" + getTotal();
-      };
-      input.onchange = () => {
-        updateTotal();
-      };
-      buttonAdd.onclick = () => {
-        input.value = +input.value + 1;
-        updateTotal();
-      };
-      buttonMinus.onclick = () => {
-        input.value = input.value == 0 ? input.value : +input.value - 1;
-        updateTotal();
-      };
-    });
+          const updateTotal = () => {
+            div.style.background = input.value == 0 ? "var(--bg)" : "seagreen";
+            resultArr[findIndex(item)].quantity = +input.value;
+            el("footer > p:nth-child(2)").innerText = "₹" + getTotal();
+          };
+          input.onchange = () => {
+            updateTotal();
+          };
+          buttonAdd.onclick = () => {
+            input.value = +input.value + 1;
+            updateTotal();
+          };
+          buttonMinus.onclick = () => {
+            input.value = input.value == 0 ? input.value : +input.value - 1;
+            updateTotal();
+          };
+        });
+    } else {
+      localList
+        .filter((i) =>
+          i.name.toLowerCase().startsWith(searchValue.toLowerCase()),
+        )
+        .forEach((item, index) => {
+          if (currentCategory != item.category) {
+            const h2 = make("h2");
+            document.body.appendChild(h2);
+            h2.innerText = item.category;
+            currentCategory = item.category;
+          }
+          const div = make("div");
+          div.className = "editing-item";
+          div.dataset.uuid = item.uuid;
+          const name = make("input");
+          name.value = item.name;
+          const price = make("input");
+          price.type = "number";
+          const category = make("select");
+          codeCategories.forEach((cat) => {
+            const option = make("option");
+            option.innerText = cat;
+            category.appendChild(option);
+          });
+          category.value = item.category;
+          let changed = false;
+          const sortDiv = make("div");
+          sortDiv.className = "sort-div";
+          const [up, down] = [make("button"), make("button")];
+          up.innerText = "↑";
+          down.innerText = "↓";
+          up.onclick = () => {
+            if (div.previousElementSibling.nodeName == "DIV") {
+              div.previousElementSibling.before(div);
+            }
+          };
+          down.onclick = () => {
+            if (div.nextElementSibling.nodeName == "DIV") {
+              div.nextElementSibling.after(div);
+            }
+          };
+          sortDiv.appendChild(up);
+          sortDiv.appendChild(down);
+          div.appendChild(sortDiv);
+          div.appendChild(name);
+          div.appendChild(price);
+          div.appendChild(category);
+          name.onchange = () => {
+            localList[findIndex(item)].name = name.value;
+          };
+          price.value = item.price;
+          price.className = "price-input";
+          price.onchange = () => {
+            localList[findIndex(item)].price = +price.value;
+          };
+          category.onchange = () => {
+            localList[findIndex(item)].category = category.value;
+          };
+          const x = make("p");
+          x.innerText = "X";
+          x.onclick = (e) => {
+            let confirmState = confirm("Delete " + name.value + "?");
+            if (!confirmState) {
+              return;
+            }
+            div.remove();
+            localList.splice(findIndex(item), 1);
+          };
+          div.appendChild(x);
+          document.body.appendChild(div);
+        });
+    }
   } else {
-    localList.forEach((item, index) => {
-      if (currentCategory != item.category) {
-        const h2 = make("h2");
-        document.body.appendChild(h2);
-        h2.innerText = item.category;
-        currentCategory = item.category;
-      }
-      const div = make("div");
-      div.className = "editing-item";
-      div.dataset.uuid = item.uuid;
-      const name = make("input");
-      name.value = item.name;
-      const price = make("input");
-      price.type = "number";
-      const category = make("select");
-      codeCategories.forEach((cat) => {
-        const option = make("option");
-        option.innerText = cat;
-        category.appendChild(option);
+    console.log(editingMode);
+    if (!editingMode) {
+      console.log(editingMode);
+      localList.forEach((item, index) => {
+        if (currentCategory != item.category) {
+          const h2 = make("h2");
+          document.body.appendChild(h2);
+          h2.innerText = item.category;
+          currentCategory = item.category;
+        }
+        const div = make("div");
+        const buttonMinus = make("button");
+        buttonMinus.className = "minus";
+        buttonMinus.innerText = "-";
+        const buttonAdd = make("button");
+        buttonAdd.className = "add";
+        buttonAdd.innerText = "+";
+        const input = make("input");
+        const h3 = make("h3");
+        const p = make("p");
+        input.type = "number";
+        input.value = "0";
+        input.min = "0";
+        div.className = "item";
+        div.appendChild(buttonMinus);
+        div.appendChild(input);
+        div.appendChild(buttonAdd);
+        div.appendChild(h3);
+        div.appendChild(p);
+        h3.innerText = item.name;
+        p.innerText = "₹" + item.price;
+        document.body.appendChild(div);
+
+        const updateTotal = () => {
+          div.style.background = input.value == 0 ? "var(--bg)" : "seagreen";
+          resultArr[findIndex(item)].quantity = +input.value;
+          el("footer > p:nth-child(2)").innerText = "₹" + getTotal();
+        };
+        input.onchange = () => {
+          updateTotal();
+        };
+        buttonAdd.onclick = () => {
+          input.value = +input.value + 1;
+          updateTotal();
+        };
+        buttonMinus.onclick = () => {
+          input.value = input.value == 0 ? input.value : +input.value - 1;
+          updateTotal();
+        };
       });
-      category.value = item.category;
-      let changed = false;
-      const sortDiv = make("div");
-      sortDiv.className = "sort-div";
-      const [up, down] = [make("button"), make("button")];
-      up.innerText = "↑";
-      down.innerText = "↓";
-      up.onclick = () => {
-        if (div.previousElementSibling.nodeName == "DIV") {
-          div.previousElementSibling.before(div);
+    } else {
+      localList.forEach((item, index) => {
+        if (currentCategory != item.category) {
+          const h2 = make("h2");
+          document.body.appendChild(h2);
+          h2.innerText = item.category;
+          currentCategory = item.category;
         }
-      };
-      down.onclick = () => {
-        if (div.nextElementSibling.nodeName == "DIV") {
-          div.nextElementSibling.after(div);
-        }
-      };
-      sortDiv.appendChild(up);
-      sortDiv.appendChild(down);
-      div.appendChild(sortDiv);
-      div.appendChild(name);
-      div.appendChild(price);
-      div.appendChild(category);
-      name.onchange = () => {
-        localList[findIndex(item)].name = name.value;
-      };
-      price.value = item.price;
-      price.className = "price-input";
-      price.onchange = () => {
-        localList[findIndex(item)].price = +price.value;
-      };
-      category.onchange = () => {
-        localList[findIndex(item)].category = category.value;
-      };
-      const x = make("p");
-      x.innerText = "X";
-      x.onclick = (e) => {
-        let confirmState = confirm("Delete " + name.value + "?");
-        if (!confirmState) {
-          return;
-        }
-        div.remove();
-        localList.splice(findIndex(item), 1);
-      };
-      div.appendChild(x);
-      document.body.appendChild(div);
-    });
+        const div = make("div");
+        div.className = "editing-item";
+        div.dataset.uuid = item.uuid;
+        const name = make("input");
+        name.value = item.name;
+        const price = make("input");
+        price.type = "number";
+        const category = make("select");
+        codeCategories.forEach((cat) => {
+          const option = make("option");
+          option.innerText = cat;
+          category.appendChild(option);
+        });
+        category.value = item.category;
+        let changed = false;
+        const sortDiv = make("div");
+        sortDiv.className = "sort-div";
+        const [up, down] = [make("button"), make("button")];
+        up.innerText = "↑";
+        down.innerText = "↓";
+        up.onclick = () => {
+          if (div.previousElementSibling.nodeName == "DIV") {
+            div.previousElementSibling.before(div);
+          }
+        };
+        down.onclick = () => {
+          if (div.nextElementSibling.nodeName == "DIV") {
+            div.nextElementSibling.after(div);
+          }
+        };
+        sortDiv.appendChild(up);
+        sortDiv.appendChild(down);
+        div.appendChild(sortDiv);
+        div.appendChild(name);
+        div.appendChild(price);
+        div.appendChild(category);
+        name.onchange = () => {
+          localList[findIndex(item)].name = name.value;
+        };
+        price.value = item.price;
+        price.className = "price-input";
+        price.onchange = () => {
+          localList[findIndex(item)].price = +price.value;
+        };
+        category.onchange = () => {
+          localList[findIndex(item)].category = category.value;
+        };
+        const x = make("p");
+        x.innerText = "X";
+        x.onclick = (e) => {
+          let confirmState = confirm("Delete " + name.value + "?");
+          if (!confirmState) {
+            return;
+          }
+          div.remove();
+          localList.splice(findIndex(item), 1);
+        };
+        div.appendChild(x);
+        document.body.appendChild(div);
+      });
+    }
   }
 }
 
@@ -720,6 +851,8 @@ el("header").onclick = () => {
 
 elA(".menu > p").forEach((option, index) => {
   option.onclick = () => {
+    el("#search").value = "";
+    debugger;
     menuState = !menuState;
     option.parentElement.style.top = "-100%";
     if (index == 5) {
@@ -787,6 +920,7 @@ elA(".menu > p").forEach((option, index) => {
           generateList();
         }
       }
+      console.log(editingMode);
     } else {
       window.scrollTo({
         top: elA("h2")[index].getBoundingClientRect().top + window.scrollY - 60,
@@ -897,5 +1031,13 @@ const logDiff = (l1, l2) => {
 
     return a.localeCompare(b);
   });
-  return logArr;
+  if (logArr == []) {
+    return ["but no changes?!"];
+  } else {
+    return logArr;
+  }
+};
+const search = el("#search");
+search.oninput = () => {
+  generateList(search.value);
 };
