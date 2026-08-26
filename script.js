@@ -852,7 +852,6 @@ el("header").onclick = () => {
 elA(".menu > p").forEach((option, index) => {
   option.onclick = () => {
     el("#search").value = "";
-    debugger;
     menuState = !menuState;
     option.parentElement.style.top = "-100%";
     if (index == 5) {
@@ -1031,7 +1030,7 @@ const logDiff = (l1, l2) => {
 
     return a.localeCompare(b);
   });
-  if (logArr == []) {
+  if (logArr.length == 0) {
     return ["but no changes?!"];
   } else {
     return logArr;
