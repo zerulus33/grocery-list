@@ -432,15 +432,20 @@ async function loadItems() {
   } catch (e) {
     error = e;
   }
-  // if (true) {
   if (error) {
-    localVersion = +localStorage.getItem("version");
+    localVersion =
+      +localStorage.getItem("version") != null
+        ? localStorage.getItem("version")
+        : codeVersion;
     if (localVersion < codeVersion) {
       localStorage.setItem("list", codeItemList);
       localStorage.setItem("version", codeVersion);
       localVersion = codeVersion;
     }
-    localList = JSON.parse(localStorage.getItem("list"));
+    localList =
+      JSON.parse(localStorage.getItem("list")) != null
+        ? JSON.parse(localStorage.getItem("list"))
+        : codeItemList;
     localList.forEach((i, i2) => {
       localList[i2].quantity = 0;
     });
@@ -451,8 +456,14 @@ async function loadItems() {
     }
     return;
   }
-  localVersion = +localStorage.getItem("version");
-  localList = JSON.parse(localStorage.getItem("list"));
+  localVersion =
+    +localStorage.getItem("version") != null
+      ? localStorage.getItem("version")
+      : codeVersion;
+  localList =
+    JSON.parse(localStorage.getItem("list")) != null
+      ? JSON.parse(localStorage.getItem("list"))
+      : codeItemList;
   localList.forEach((i, i2) => {
     localList[i2].quantity = 0;
   });
@@ -504,7 +515,6 @@ const getCategories = () => {
   return categoriesArray;
 };
 function generateList(searchValue = false) {
-  console.log(editingMode);
   while (document.body.children.length > 5) {
     document.body.children[5].remove();
   }
@@ -636,9 +646,7 @@ function generateList(searchValue = false) {
         });
     }
   } else {
-    console.log(editingMode);
     if (!editingMode) {
-      console.log(editingMode);
       localList.forEach((item, index) => {
         if (currentCategory != item.category) {
           const h2 = make("h2");
@@ -772,35 +780,27 @@ el("footer").onclick = (e) => {
   let extraResults = "";
 
   let count = 0;
+  let dated = false;
   resultArr.forEach((item, index) => {
     if (item.quantity != 0) {
-      if (count == 0) {
-        count++;
-        results1 = "- *" + item.name + " x " + item.quantity + "*";
-        const ddMMyyyy = new Date()
-          .toLocaleDateString("en-GB")
-          .replace(/\//g, "-");
-        results2 =
-          "k," +
-          ddMMyyyy +
-          "," +
-          item.name +
-          "," +
-          item.price +
-          "," +
-          item.quantity;
-      } else {
-        results1 =
-          results1 + "\n" + "- *" + item.name + " x " + item.quantity + "*";
-        results2 =
-          results2 +
-          "\nk,," +
-          item.name +
-          "," +
-          item.price +
-          "," +
-          item.quantity;
-      }
+      count++;
+      results1 =
+        results1 + count + ". *" + item.name + " x " + item.quantity + "* \n\n";
+      const ddMMyyyy = !dated
+        ? new Date().toLocaleDateString("en-GB").replace(/\//g, "-")
+        : "";
+      dated = true;
+      results2 =
+        results2 +
+        "k," +
+        ddMMyyyy +
+        "," +
+        item.name +
+        "," +
+        item.price +
+        "," +
+        item.quantity +
+        "\n";
     }
   });
   if (elA(".extra").length != 0 && el(".extra > input").value != "") {
@@ -809,18 +809,24 @@ el("footer").onclick = (e) => {
       let quantity = +extraItem.children[1].value;
 
       if (quantity != 0) {
-        if (count == 0) {
-          count++;
-          results1 = "- *" + name + " x " + quantity + "*";
-          const ddMMyyyy = new Date()
-            .toLocaleDateString("en-GB")
-            .replace(/\//g, "-");
-          results2 = "k," + ddMMyyyy + "," + name + "," + 0 + "," + quantity;
-        } else {
-          results1 = results1 + "\n" + "- *" + name + " x " + quantity + "*";
-          results2 = results2 + "\nk,," + name + "," + 0 + "," + quantity;
-        }
-        extraResults = extraResults + `\n[${name},0,${quantity},""]`;
+        count++;
+        results1 = results1 + count + ". *" + name + " x " + quantity + "*\n\n";
+        const ddMMyyyy = !dated
+          ? new Date().toLocaleDateString("en-GB").replace(/\//g, "-")
+          : "";
+        dated = true;
+        results2 =
+          results2 +
+          "k," +
+          ddMMyyyy +
+          "," +
+          name +
+          "," +
+          0 +
+          "," +
+          quantity +
+          "\n";
+        extraResults = extraResults + `[${name},0,${quantity},""]\n`;
       }
     });
   }
@@ -833,8 +839,7 @@ el("footer").onclick = (e) => {
       "*\n" +
       "-------------------------" +
       "\n" +
-      results2 +
-      "\n-------------------------";
+      results2;
 
     results = extraResults != "" ? results + extraResults : results;
     console.log(results);
@@ -919,7 +924,6 @@ elA(".menu > p").forEach((option, index) => {
           generateList();
         }
       }
-      console.log(editingMode);
     } else {
       window.scrollTo({
         top: elA("h2")[index].getBoundingClientRect().top + window.scrollY - 60,
@@ -1014,7 +1018,6 @@ const logDiff = (l1, l2) => {
       logArr.push("ADDED: " + item.name);
     }
   });
-  console.log(logArr);
   logArr.sort((a, b) => {
     const getPriority = (str) => {
       const category = str.slice(0, 3);
