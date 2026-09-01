@@ -167,6 +167,9 @@ p#add {
 .modal > .actual.log {
   width: 90dvw;
   height: max-content;
+  max-height: 80dvh;
+  overflow-y: scroll;
+  scrollbar-width: none;
   padding: 20px;
   border: 1px solid;
   display: flex;
