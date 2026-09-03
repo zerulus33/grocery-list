@@ -26,7 +26,7 @@ footer {
   place-items: center;
   justify-content: center;
   border-bottom: 1px solid;
-  z-index: 2;
+  z-index: 3;
 }
 footer {
   top: auto;
@@ -167,9 +167,6 @@ p#add {
 .modal > .actual.log {
   width: 90dvw;
   height: max-content;
-  max-height: 80dvh;
-  overflow-y: scroll;
-  scrollbar-width: none;
   padding: 20px;
   border: 1px solid;
   display: flex;
@@ -178,6 +175,11 @@ p#add {
   align-items: center;
   gap: 20px;
   animation: downandin 0.3s forwards;
+}
+.modal > .actual.log > ul {
+  max-height: 60dvh;
+  overflow-y: scroll;
+  scrollbar-width: none;
 }
 .modal > .actual > h2 {
   margin: 0;
@@ -244,7 +246,7 @@ p#add {
   padding: 10px;
   border: 1px solid;
 }
-.sort-div {
+.editing-item > div {
   display: flex;
   flex-direction: column;
   width: min-content !important;
@@ -254,12 +256,27 @@ p#add {
 }
 #search {
   margin-top: 30px;
-  padding: 10px 0 10px 20px;
+  padding: 20px 0 20px 20px;
   width: 90dvw;
   text-align: left;
-  border: 1px solid;
+  border: none;
   border-radius: 5px;
-  position: sticky;
+  /* position: sticky; */
   top: 70px;
   z-index: 1;
+  background: var(--fg);
+  color: var(--bg);
+}
+#search::placeholder {
+  color: var(--bg);
+}
+header > span {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  /* background: red; */
+  display: grid;
+  place-items: center;
+  height: 100%;
+  width: 50px;
 }
